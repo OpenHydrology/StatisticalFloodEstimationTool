@@ -1,5 +1,2 @@
-appdirs
-sqlalchemy
-numpy
-scipy
-lmoments3
+floodestimation
+wxpython

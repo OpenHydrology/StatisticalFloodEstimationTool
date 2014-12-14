@@ -89,8 +89,7 @@ class Fpanel(wx.Panel):
       #username=os.environ['USERNAME']
       username=wx.GetUserName() 
       sign_time = time.asctime(time.localtime())
-      qmed = config.adopted_qmed
-      signature = "Adopted QMED="+str(qmed)+" "+str(username)+" "+str(sign_time)
+      signature = "Adopted QMED="+str('#.#')+" "+str(username)+" "+str(sign_time)
       return signature
     
     

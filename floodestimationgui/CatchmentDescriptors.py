@@ -24,8 +24,9 @@ Tab used to store/collect catchment descriptors
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 '''
-import wx,os,cds_reader,time
+import wx,os,time
 import config
+from floodestimation.loaders import load_catchment
 
 class Fpanel(wx.Panel):
     def __init__(self, parent,p):
@@ -52,7 +53,7 @@ class Fpanel(wx.Panel):
         urbconc1990_label = wx.StaticText(self, -1, "URBCONC1990")
         urbconc2000_label = wx.StaticText(self, -1, "URBCONC2000")
         urbext1990_label = wx.StaticText(self, -1, "URBEXT1990")
-        urbext2000_label = wx.StaticText(self, -1, "URBEXT2000")
+        urbext2000_label = wx.StaticText(self, -1, "URBEXT1990")
         urbloc1990_label = wx.StaticText(self, -1, "URBLOC1990")
         urbloc2000_label = wx.StaticText(self, -1, "URBLOC2000")
         chnl_width_label = wx.StaticText(self, -1, "Channel width")
@@ -210,11 +211,15 @@ class Fpanel(wx.Panel):
         
     def onLoadCds(self,event):
       #loadBox = wx.FileDialog(self,message="Open",defaultDir=os.getcwd(),defaultFile="CSV files (*.csv)|*.csv",style=wx.OPEN)
-      loadBox = wx.FileDialog(self, "Open cds file", "", "","Catchment descriptor files (*.csv)|*.csv", wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
+      loadBox = wx.FileDialog(self, "Open cds file", "", "","Catchment descriptor files (*.cd3)|*.cd3", wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
+      
       
       #self.title_label.SetLabel(str(self.p.title.GetValue()))
       if loadBox.ShowModal() == wx.ID_OK:
         filePath = loadBox.GetPath()
+        
+        config.target_catchment = load_catchment(filePath)
+        
         cds = cds_reader.csvCds(filePath)
         
         self.outlet_grid.SetLabel(str(cds['CATCHMENT'][0]))

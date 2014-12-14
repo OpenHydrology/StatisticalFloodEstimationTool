@@ -43,7 +43,7 @@ def searchForDirectories(searchPath,f):
   for item in list:
     currentPath = os.path.join(searchPath,item)
     if os.path.isdir(currentPath):
-      print item
+      print(item)
       searchForDirectories(currentPath,f)
     elif os.path.isfile(currentPath):
       if item.lower().endswith('cd3'):
