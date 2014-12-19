@@ -165,14 +165,9 @@ class Fpanel(wx.Panel):
       self.table = wx.Panel(self, -1)
       self.list = CheckListCtrl(self.table)
       self.list.InsertColumn(0, 'STATION')
-      self.list.InsertColumn(1, 'DISTANCE')
-      self.list.InsertColumn(2, 'AREA')
-      self.list.InsertColumn(3, 'SAAR')
-      self.list.InsertColumn(5, 'BFIHOST')
-      self.list.InsertColumn(5, 'FARL')
-      self.list.InsertColumn(6, 'QMED OBS')
-      self.list.InsertColumn(7, 'QMED ERROR')
-      self.list.InsertColumn(8, 'ASG')
+      self.list.InsertColumn(1, 'DONOR ADJUSTMENT FACTOR')
+      self.list.InsertColumn(2, 'ERROR CORRELATION')
+      self.list.InsertColumn(3, 'WEIGHT')
       
       sizer.Add(self.table, pos=(9,0),span=(1,6),flag=wx.EXPAND)
       sizer.Add(self.station_search_distance_label, pos=(10,0),span=(1,1))
@@ -231,13 +226,12 @@ class Fpanel(wx.Panel):
       self.refreshDonors()
 
     def calcQMeds(self):
-      db_session = db.Session()
+      config.Analysis.run_qmed_analysis()
+      #print(config.Analysis.results['qmed'])
       
-      #self.gauged_catchments = CatchmentCollections(db_session)
+      #db_session = db.Session()
       
-      self.qmed_analysis = QmedAnalysis(config.target_catchment, self.gauged_catchments)
-      
-      qmedDict = self.qmed_analysis.qmed_all_methods()
+      qmedDict = config.Analysis.results['qmed_all_methods']
       
       self.qmed_cds1999.SetLabel(str(qmedDict['descriptors_1999']))
       self.qmed_cds2008.SetLabel(str(qmedDict['descriptors']))
@@ -246,7 +240,7 @@ class Fpanel(wx.Panel):
       self.qmed_areaOnly.SetLabel(str(qmedDict['area']))
       self.qmed_geom.SetLabel(str(qmedDict['channel_width']))
       
-      db_session.close()
+      #db_session.close()
 
       self.Refresh()
       self.Update()    
@@ -254,15 +248,13 @@ class Fpanel(wx.Panel):
     def refreshDonors(self):
       search_limit = float(self.station_limit.GetValue())
       search_distance = float(self.station_search_distance.GetValue())
-      self.qmed_analysis.idw_power = float(self.idw_weight.GetValue())
+      config.Analysis.idw_power = float(self.idw_weight.GetValue())
       
-      donors = self.qmed_analysis.find_donor_catchments(search_limit, search_distance)
+      donors = config.Analysis.results['donors_details']
      
-      for donor in donors:
-     
-        #index = self.list.InsertStringItem(sys.maxint, str(donor))
-        index = self.list.InsertStringItem(0, str(donor))
-        self.list.SetStringItem(index, 1, str('text'))
-        self.list.SetStringItem(index, 2, str(self.qmed_analysis._error_correlation(donor)))
-        self.list.SetStringItem(index, 3, str(self.qmed_analysis.donor_weighting))                        
+      for donor in donors[::-1]:
+        index = self.list.InsertStringItem(0, str(donor[0]))
+        self.list.SetItem(index, 1, str(donor[1]))
+        self.list.SetItem(index, 2, str(donor[2]))
+        self.list.SetItem(index, 3, str(donor[3]))                            
 

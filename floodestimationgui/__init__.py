@@ -18,6 +18,71 @@
 # Current package imports
 import floodestimation,wx
 import FrontPage,CatchmentDescriptors,QMED
+import config as c
+
+
+from floodestimation.loaders import load_catchment
+from floodestimation import db
+from floodestimation.collections import CatchmentCollections
+from floodestimation.analysis import QmedAnalysis, GrowthCurveAnalysis
+
+class Analysis(object):
+    def __init__(self):
+        self.name = None
+        #self.folder = os.path.dirname(cd3_file_path)
+        #self.results = {'report_date': date.today()}
+        self.catchment = None
+        #self.results['catchment'] = self.catchment
+        self.db_session = db.Session()
+        self.gauged_catchments = CatchmentCollections(self.db_session)
+        self.qmed = None
+
+    def finish(self):
+        self.db_session.close()
+
+    def run(self):
+        try:
+            self.run_qmed_analysis()
+            self.run_growthcurve()
+        finally:
+            self.finish()
+
+    def run_qmed_analysis(self):
+
+        analysis = QmedAnalysis(self.catchment, self.gauged_catchments)
+        self.qmed = analysis.qmed(method='descriptors')
+
+
+        self.results = analysis.log()
+        self.results['qmed_all_methods'] = analysis.qmed_all_methods()
+        self.results['qmed'] = self.qmed
+        
+        self.results['donors_details']=list()
+        weights = analysis._donor_weights(self.results['donors'])
+        
+        i = 0
+        for donor in self.results['donors']:
+          self.results['donors_details'].append([donor,analysis._donor_adj_factor(donor),analysis._error_correlation(donor),weights[i]])       
+          i=i+1
+        
+        
+        #print(self.results)
+
+    def run_growthcurve(self):
+        results = {}
+
+        analysis = GrowthCurveAnalysis(self.catchment, self.gauged_catchments, results_log=results)
+        gc = analysis.growth_curve()
+
+        aeps = [0.5, 0.2, 0.1, 0.05, 0.03333, 0.02, 0.01333, 0.01, 0.005, 0.002, 0.001]
+        growth_factors = gc(aeps)
+        flows = growth_factors * self.qmed
+
+        results['aeps'] = aeps
+        results['growth_factors'] = growth_factors
+        results['flows'] = flows
+        self.results['gc'] = results
+
 
 class MainFrame(wx.Frame):
   def __init__(self,parent):
@@ -28,6 +93,8 @@ class MainFrame(wx.Frame):
       self.fileName = ""
       self.windowName = 'Main Window'
       self.SetName(self.windowName)
+      
+      c.Analysis = Analysis()
       
       self.InitUI()
       self.Centre()

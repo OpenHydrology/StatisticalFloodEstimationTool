@@ -218,8 +218,11 @@ class Fpanel(wx.Panel):
       if loadBox.ShowModal() == wx.ID_OK:
         filePath = loadBox.GetPath()
         
-        config.target_catchment = load_catchment(filePath)
+        #config.target_catchment = load_catchment(filePath)
+        config.Analysis.cd3_file_path = filePath
+        config.Analysis.catchment = load_catchment(filePath)
         
+        '''
         cds = cds_reader.csvCds(filePath)
         
         self.outlet_grid.SetLabel(str(cds['CATCHMENT'][0]))
@@ -265,6 +268,7 @@ class Fpanel(wx.Panel):
           self.urbloc2000.SetLabel(str('-'))
           self.urbconc2000.SetLabel(str('-'))
           self.urbext2000.SetLabel(str('-'))
+      '''
       loadBox.Destroy()
       
       self.Refresh()
