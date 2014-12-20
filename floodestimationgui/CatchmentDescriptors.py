@@ -219,56 +219,55 @@ class Fpanel(wx.Panel):
         filePath = loadBox.GetPath()
         
         #config.target_catchment = load_catchment(filePath)
-        config.Analysis.cd3_file_path = filePath
-        config.Analysis.catchment = load_catchment(filePath)
+        config.analysis.cd3_file_path = filePath
+        config.analysis.catchment = load_catchment(filePath)
         
-        '''
-        cds = cds_reader.csvCds(filePath)
+        self.outlet_grid.SetLabel(str(config.analysis.catchment.country))
+        self.outlet_x.SetLabel(str(config.analysis.catchment.descriptors.ihdtm_ngr.x))
+        self.outlet_y.SetLabel(str(config.analysis.catchment.descriptors.ihdtm_ngr.y))
         
-        self.outlet_grid.SetLabel(str(cds['CATCHMENT'][0]))
-        self.outlet_x.SetLabel(str(cds['CATCHMENT'][1]))
-        self.outlet_y.SetLabel(str(cds['CATCHMENT'][2]))
         try:
-          self.centroid_grid.SetLabel(str(cds['CENTROID'][0]))
-          self.centroid_x.SetLabel(str(cds['CENTROID'][1]))
-          self.centroid_y.SetLabel(str(cds['CENTROID'][2]))
+          self.centroid_grid.SetLabel(str(config.analysis.catchment.country))
+          self.centroid_x.SetLabel(str(config.analysis.catchment.descriptors.centroid_ngr.x))
+          self.centroid_y.SetLabel(str(config.analysis.catchment.descriptors.centroid_ngr.y))
         except:   
           self.centroid_grid.SetLabel(str('-'))
           self.centroid_x.SetLabel(str('-'))
           self.centroid_y.SetLabel(str('-'))
-        self.carea.SetLabel(str(cds['AREA']))
-        self.altbar.SetLabel(str(cds['ALTBAR']))
-        self.aspbar.SetLabel(str(cds['ASPBAR']))
-        self.aspvar.SetLabel(str(cds['ASPVAR']))
-        self.bfihost.SetLabel(str(cds['BFIHOST']))
-        self.dplbar.SetLabel(str(cds['DPLBAR']))
-        self.dpsbar.SetLabel(str(cds['DPSBAR']))
-        self.farl.SetLabel(str(cds['FARL']))
-        self.ldp.SetLabel(str(cds['LDP']))
-        self.propwet.SetLabel(str(cds['PROPWET']))
-        self.saar.SetLabel(str(cds['SAAR']))
-        self.sprhost.SetLabel(str(cds['SPRHOST']))
+
+        self.carea.SetLabel(str(config.analysis.catchment.descriptors.dtm_area))
+        self.altbar.SetLabel(str(config.analysis.catchment.descriptors.altbar))
+        self.aspbar.SetLabel(str(config.analysis.catchment.descriptors.aspbar))
+        self.aspvar.SetLabel(str(config.analysis.catchment.descriptors.aspvar))
+        self.bfihost.SetLabel(str(config.analysis.catchment.descriptors.bfihost))
+        self.dplbar.SetLabel(str(config.analysis.catchment.descriptors.dplbar))
+        self.dpsbar.SetLabel(str(config.analysis.catchment.descriptors.dpsbar))
+        self.farl.SetLabel(str(config.analysis.catchment.descriptors.farl))
+        self.ldp.SetLabel(str(config.analysis.catchment.descriptors.ldp))
+        self.propwet.SetLabel(str(config.analysis.catchment.descriptors.propwet))
+        self.saar.SetLabel(str(config.analysis.catchment.descriptors.saar))
+        self.sprhost.SetLabel(str(config.analysis.catchment.descriptors.sprhost))
         try:
-          self.fpext.SetLabel(str(cds['FPEXT']))
+          self.fpext.SetLabel(str(config.analysis.catchment.descriptors.fpext))
         except:
           self.fpext.SetLabel(str('-'))
         try:
-          self.urbconc1990.SetLabel(str(cds['URBCONC1990']))
-          self.urbext1990.SetLabel(str(cds['URBEXT1990']))
-          self.urbloc1990.SetLabel(str(cds['URBLOC1990']))
+          self.urbconc1990.SetLabel(str(config.analysis.catchment.descriptors.urbconc1990))
+          self.urbext1990.SetLabel(str(config.analysis.catchment.descriptors.urbext1990))
+          self.urbloc1990.SetLabel(str(config.analysis.catchment.descriptors.urbloc1990))
         except:
           self.urbconc1990.SetLabel(str('-'))
           self.urbext1990.SetLabel(str('-'))
           self.urbloc1990.SetLabel(str('-'))
         try:
-          self.urbloc2000.SetLabel(str(cds['URBLOC2000']))
-          self.urbconc2000.SetLabel(str(cds['URBCONC2000']))
-          self.urbext2000.SetLabel(str(cds['URBEXT2000']))
+          self.urbloc2000.SetLabel(str(config.analysis.catchment.descriptors.urbloc2000))
+          self.urbconc2000.SetLabel(str(config.analysis.catchment.descriptors.urbconc2000))
+          self.urbext2000.SetLabel(str(config.analysis.catchment.descriptors.urbext2000))
         except:
           self.urbloc2000.SetLabel(str('-'))
           self.urbconc2000.SetLabel(str('-'))
           self.urbext2000.SetLabel(str('-'))
-      '''
+      
       loadBox.Destroy()
       
       self.Refresh()
