@@ -60,7 +60,7 @@ class Fpanel(wx.Panel):
       
       self.qmed_notes = wx.TextCtrl(self, -1, "Notes on QMED", size=(350,150),style=wx.TE_MULTILINE)
       
-      self.qmed_2008_label = wx.StaticText(self, -1, "QMED CDS 2000")
+      self.qmed_2008_label = wx.StaticText(self, -1, "QMED CDS 2008")
       self.qmed_1999_label = wx.StaticText(self, -1, "QMED CDS 1999")
       self.qmed_area_label = wx.StaticText(self, -1, "QMED AREA")
       self.qmed_amax_label = wx.StaticText(self, -1, "QMED AMAX")
@@ -226,15 +226,12 @@ class Fpanel(wx.Panel):
       self.refreshDonors()
 
     def calcQMeds(self):
-      config.Analysis.run_qmed_analysis()
-      #print(config.Analysis.results['qmed'])
+      config.analysis.run_qmed_analysis()
       
-      #db_session = db.Session()
+      qmedDict = config.analysis.results['qmed_all_methods']
       
-      qmedDict = config.Analysis.results['qmed_all_methods']
-      
-      self.qmed_cds1999.SetLabel(str(qmedDict['descriptors_1999']))
-      self.qmed_cds2008.SetLabel(str(qmedDict['descriptors']))
+      self.qmed_cds1999.SetLabel(str(qmedDict['qmed_1999_unadj']))
+      self.qmed_cds2008.SetLabel(str(qmedDict['qmed_2008_unadj']))
       self.qmed_obs_amax.SetLabel(str(qmedDict['amax_records']))
       self.qmed_obs_pot.SetLabel(str(qmedDict['pot_records']))
       self.qmed_areaOnly.SetLabel(str(qmedDict['area']))
@@ -248,11 +245,22 @@ class Fpanel(wx.Panel):
     def refreshDonors(self):
       search_limit = float(self.station_limit.GetValue())
       search_distance = float(self.station_search_distance.GetValue())
-      config.Analysis.idw_power = float(self.idw_weight.GetValue())
+      config.analysis.qmed_analysis.idw_power = float(self.idw_weight.GetValue())
       
-      donors = config.Analysis.results['donors_details']
+      donors = config.analysis.qmed_analysis.find_donor_catchments(search_limit, search_distance)
+      
+      donors_details=list()
+      weights = config.analysis.qmed_analysis._donor_weights(donors)
+      
+      self.list.BestSize
+      self.list.DeleteAllItems()
+      
+      i = 0
+      for donor in donors:
+        donors_details.append([donor,config.analysis.qmed_analysis._donor_adj_factor(donor),config.analysis.qmed_analysis._error_correlation(donor),weights[i]])       
+        i=i+1
      
-      for donor in donors[::-1]:
+      for donor in donors_details[::-1]:
         index = self.list.InsertStringItem(0, str(donor[0]))
         self.list.SetItem(index, 1, str(donor[1]))
         self.list.SetItem(index, 2, str(donor[2]))

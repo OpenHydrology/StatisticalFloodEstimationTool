@@ -49,22 +49,17 @@ class Analysis(object):
 
     def run_qmed_analysis(self):
 
-        analysis = QmedAnalysis(self.catchment, self.gauged_catchments)
-        self.qmed = analysis.qmed(method='descriptors')
+        self.qmed_analysis = QmedAnalysis(self.catchment, self.gauged_catchments)
+        self.qmed = self.qmed_analysis.qmed(method='descriptors')
 
 
-        self.results = analysis.log()
-        self.results['qmed_all_methods'] = analysis.qmed_all_methods()
+
+        self.results = self.qmed_analysis.log()
+        self.results['qmed_all_methods'] = self.qmed_analysis.qmed_all_methods()
         self.results['qmed'] = self.qmed
         
-        self.results['donors_details']=list()
-        weights = analysis._donor_weights(self.results['donors'])
-        
-        i = 0
-        for donor in self.results['donors']:
-          self.results['donors_details'].append([donor,analysis._donor_adj_factor(donor),analysis._error_correlation(donor),weights[i]])       
-          i=i+1
-        
+        self.results['qmed_all_methods']['qmed_2008_unadj']=self.qmed_analysis._qmed_from_descriptors_2008(False, None)
+        self.results['qmed_all_methods']['qmed_1999_unadj']=self.qmed_analysis._qmed_from_descriptors_1999(as_rural=True)      
         
         #print(self.results)
 
@@ -94,7 +89,7 @@ class MainFrame(wx.Frame):
       self.windowName = 'Main Window'
       self.SetName(self.windowName)
       
-      c.Analysis = Analysis()
+      c.analysis = Analysis()
       
       self.InitUI()
       self.Centre()
