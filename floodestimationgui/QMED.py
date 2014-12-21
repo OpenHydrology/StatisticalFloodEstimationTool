@@ -35,7 +35,7 @@ from floodestimation.analysis import QmedAnalysis
 
 class CheckListCtrl(wx.ListCtrl, CheckListCtrlMixin, ListCtrlAutoWidthMixin):
     def __init__(self, parent):
-        wx.ListCtrl.__init__(self, parent, -1,size=(750,200), style=wx.LC_REPORT | wx.SUNKEN_BORDER)
+        wx.ListCtrl.__init__(self, parent, -1,size=(750,100), style=wx.LC_REPORT | wx.SUNKEN_BORDER)
         CheckListCtrlMixin.__init__(self)
         ListCtrlAutoWidthMixin.__init__(self)
 
@@ -114,7 +114,8 @@ class Fpanel(wx.Panel):
       self.locally_adjusted_qmed = wx.TextCtrl(self, -1, "-", style =wx.TE_READONLY)
       
       self.update_for_urb_chk = wx.CheckBox(self,-1,'Update for urbanisation')
-      #self.Bind(wx.EVT_CHECKBOX, self.SetUrbanChk, id=self.update_for_urb_chk.GetId())
+      self.update_for_urb_chk.Bind(wx.EVT_CHECKBOX, self.SetUrbanChk, id=self.update_for_urb_chk.GetId())
+      
       self.urban_expansion_factor_label = wx.StaticText(self, -1, "Urban expansion factor")
       self.adjusted_urbext_label = wx.StaticText(self, -1, "Adjusted URBEXT")
       self.urban_adjustment_factor_label = wx.StaticText(self, -1, "Urban adjustment factor")
@@ -201,6 +202,16 @@ class Fpanel(wx.Panel):
       self.SetSizerAndFit(border)
       self.Fit()
     
+    def SetUrbanChk(self,event):
+      self.updateUrbanisation()
+      
+    def updateUrbanisation(self):
+      self.update_for_urbanisation = bool(self.update_for_urb_chk.GetValue())
+      if self.update_for_urbanisation:
+        self.keep_rural = False
+      else:
+        self.keep_rural = True
+      
     def SetVal(self, event):
       if bool(self.rb1.GetValue()) == True:
         self.qmed_method = 'descriptors'
@@ -225,6 +236,7 @@ class Fpanel(wx.Panel):
       self.Update()
       
     def onRefresh(self,event):
+      self.updateUrbanisation()
       self.calcQMeds()
       self.refreshDonors()
       self.refreshUrbanisation()
@@ -233,6 +245,8 @@ class Fpanel(wx.Panel):
       self.urban_adjustment_factor.SetLabel(str(config.analysis.qmed_analysis.urban_adj_factor()))
       #self.urban_adjustment_factor.SetLabel(str(config.analysis.qmed_analysis._pruaf()))
       self.urban_expansion_factor.SetLabel(str('Not calculated'))
+      
+      self.adopted_qmed.SetLabel(str(config.analysis.qmed_analysis.qmed(method=self.qmed_method,as_rural=self.keep_rural,donor_catchments=None)))
 
     def calcQMeds(self):
       config.analysis.run_qmed_analysis()
