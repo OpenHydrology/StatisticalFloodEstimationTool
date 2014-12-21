@@ -261,8 +261,8 @@ class Fpanel(wx.Panel):
         config.analysis.catchment.descriptors.ihdtm_ngr.x = int(self.outlet_x.GetValue())
         config.analysis.catchment.descriptors.ihdtm_ngr.y = int(self.outlet_y.GetValue())
         
-        config.analysis.catchment.descriptors.centroid_ngr.x = float(self.centroid_x.GetValue())
-        config.analysis.catchment.descriptors.centroid_ngr.y = float(self.centroid_y.GetValue())
+        config.analysis.catchment.descriptors.centroid_ngr.x = int(self.centroid_x.GetValue())
+        config.analysis.catchment.descriptors.centroid_ngr.y = int(self.centroid_y.GetValue())
         
         config.analysis.catchment.descriptors.dtm_area = float(self.carea.GetValue())
 
@@ -276,7 +276,7 @@ class Fpanel(wx.Panel):
         config.analysis.catchment.descriptors.farl = float(self.farl.GetValue())
         config.analysis.catchment.descriptors.ldp = float(self.ldp.GetValue())
         config.analysis.catchment.descriptors.propwet = float(self.propwet.GetValue())
-        config.analysis.catchment.descriptors.saar = float(self.saar.GeValue())
+        config.analysis.catchment.descriptors.saar = float(self.saar.GetValue())
         config.analysis.catchment.descriptors.sprhost = float(self.sprhost.GetValue())
         config.analysis.catchment.descriptors.fpext = float(self.fpext.GetValue())
 

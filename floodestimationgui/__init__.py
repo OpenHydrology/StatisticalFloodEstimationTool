@@ -17,6 +17,7 @@
 
 # Current package imports
 import floodestimation,wx
+import os
 import FrontPage,CatchmentDescriptors,QMED
 import config as c
 
@@ -48,20 +49,13 @@ class Analysis(object):
             self.finish()
 
     def run_qmed_analysis(self):
-
         self.qmed_analysis = QmedAnalysis(self.catchment, self.gauged_catchments)
-        self.qmed = self.qmed_analysis.qmed(method='descriptors')
+        #self.qmed = self.qmed_analysis.qmed(method='descriptors')
+        
 
-
-
-        self.results = self.qmed_analysis.log()
+        self.results = self.qmed_analysis.results_log
         self.results['qmed_all_methods'] = self.qmed_analysis.qmed_all_methods()
-        self.results['qmed'] = self.qmed
-        
-        #self.results['qmed_all_methods']['qmed_2008_unadj']=self.qmed_analysis._qmed_from_descriptors_2008(False, None)
-        #self.results['qmed_all_methods']['qmed_1999_unadj']=self.qmed_analysis._qmed_from_descriptors_1999(as_rural=True)      
-        
-        #print(self.results)
+        #self.results['qmed'] = self.qmed
 
     def run_growthcurve(self):
         results = {}

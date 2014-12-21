@@ -49,8 +49,7 @@ class Fpanel(wx.Panel):
       self.qmed_analysis = QmedAnalysis(config.target_catchment, self.gauged_catchments)
       db_session.close()
       
-      self.data_series = None
-      self.amax_data_series = None
+      self.qmed_method = 'best'
       
       self.adoptedQmed = '-'
       
@@ -204,20 +203,21 @@ class Fpanel(wx.Panel):
     
     def SetVal(self, event):
       if bool(self.rb1.GetValue()) == True:
-        self.selected_unadj_qmed.SetLabel(str(self.qmed_cds2008.GetValue()))
+        self.qmed_method = 'descriptors'
       if bool(self.rb2.GetValue()) == True:
-        self.selected_unadj_qmed.SetLabel(str(self.qmed_cds1999.GetValue()))
+        self.qmed_method = 'descriptors_1999'
       if bool(self.rb3.GetValue()) == True:
-        self.selected_unadj_qmed.SetLabel(str(self.qmed_areaOnly.GetValue()))
+        self.qmed_method = 'area'
       if bool(self.rb4.GetValue()) == True:
-        self.selected_unadj_qmed.SetLabel(str(self.qmed_amax.GetValue()))
+        self.qmed_method = 'amax_records'
       if bool(self.rb5.GetValue()) == True:
-        self.selected_unadj_qmed.SetLabel(str(self.qmed_pot.GetValue()))
+        self.qmed_method = 'pot_records'
       if bool(self.rb6.GetValue()) == True:
-        self.selected_unadj_qmed.SetLabel(str(self.qmed_geom.GetValue()))
+        self.qmed_method = 'channel_width'
       if bool(self.rb7.GetValue()) == True:
-        self.selected_unadj_qmed.SetLabel(str(self.qmed_user.GetValue()))
-      
+        self.qmed_method = 'user'
+      self.selected_unadj_qmed.SetLabel(str(config.analysis.qmed_analysis.qmed(method=self.qmed_method)))
+        
       self.Refresh()
       self.Update()
       
