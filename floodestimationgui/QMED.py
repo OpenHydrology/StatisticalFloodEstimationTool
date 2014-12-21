@@ -66,7 +66,7 @@ class Fpanel(wx.Panel):
       self.qmed_pot_label = wx.StaticText(self, -1, "QMED POT")
       self.qmed_width_label = wx.StaticText(self, -1, "QMED Channel width")
       self.user_qmed_label = wx.StaticText(self, -1, "User QMED")
-      self.selected_unadj_qmed_label = wx.StaticText(self, -1, "Selected unadjusted QMED")
+      self.selected_unadj_qmed_label = wx.StaticText(self, -1, "Selected rural QMED")
       self.station_search_distance_label = wx.StaticText(self, -1, "Station search distance")
       self.station_search_limit_label = wx.StaticText(self, -1, "Station search limit")
       self.idw_label = wx.StaticText(self, -1, "IDW")
@@ -216,7 +216,10 @@ class Fpanel(wx.Panel):
         self.qmed_method = 'channel_width'
       if bool(self.rb7.GetValue()) == True:
         self.qmed_method = 'user'
-      self.selected_unadj_qmed.SetLabel(str(config.analysis.qmed_analysis.qmed(method=self.qmed_method)))
+      try:
+        self.selected_unadj_qmed.SetLabel(str(config.analysis.qmed_analysis.qmed(method=self.qmed_method,as_rural=True,donor_catchments=False)))
+      except:
+        self.selected_unadj_qmed.SetLabel(str(config.analysis.qmed_analysis.qmed(method=self.qmed_method)))
         
       self.Refresh()
       self.Update()
@@ -224,17 +227,23 @@ class Fpanel(wx.Panel):
     def onRefresh(self,event):
       self.calcQMeds()
       self.refreshDonors()
+      self.refreshUrbanisation()
+
+    def refreshUrbanisation(self):
+      self.urban_adjustment_factor.SetLabel(str(config.analysis.qmed_analysis.urban_adj_factor()))
+      #self.urban_adjustment_factor.SetLabel(str(config.analysis.qmed_analysis._pruaf()))
+      self.urban_expansion_factor.SetLabel(str('Not calculated'))
 
     def calcQMeds(self):
       config.analysis.run_qmed_analysis()
       
       qmedDict = config.analysis.results['qmed_all_methods']
       
-      self.qmed_cds1999.SetLabel(str(qmedDict['descriptors']))
-      self.qmed_cds2008.SetLabel(str(qmedDict['descriptors_1999']))
+      self.qmed_cds1999.SetLabel(str(config.analysis.qmed_analysis.qmed('descriptors_1999',as_rural=True)))
+      self.qmed_cds2008.SetLabel(str(config.analysis.qmed_analysis.qmed('descriptors',as_rural=True,donor_catchments=False)))
       self.qmed_obs_amax.SetLabel(str(qmedDict['amax_records']))
       self.qmed_obs_pot.SetLabel(str(qmedDict['pot_records']))
-      self.qmed_areaOnly.SetLabel(str(qmedDict['area']))
+      self.qmed_areaOnly.SetLabel(str(config.analysis.qmed_analysis.qmed('area')))
       self.qmed_geom.SetLabel(str(qmedDict['channel_width']))
       
       #db_session.close()

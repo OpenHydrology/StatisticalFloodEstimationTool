@@ -24,7 +24,7 @@ Front page tab for calculation, used to hold catchment title, author and checkin
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 '''
-import wx,time,os
+import wx,time
 import config
 
 class Fpanel(wx.Panel):
@@ -44,7 +44,8 @@ class Fpanel(wx.Panel):
         self.chker_sgn_btn = wx.Button(self, -1, ' Sign as checker ')
         self.chker_clr_btn = wx.Button(self, -1, ' Clear ')
         
-        self.title = wx.TextCtrl(self, -1, "Catchment @ location", size=(500,50),style=wx.TE_MULTILINE)
+        self.catchment = wx.TextCtrl(self, -1, "Catchment", size=(200,25))
+        self.location = wx.TextCtrl(self, -1, "location", size=(200,25))
         self.purpose = wx.TextCtrl(self, -1, "State purpose of assessment", size=(500,50),style=wx.TE_MULTILINE)
         self.author_notes = wx.TextCtrl(self, -1, "Author's notes", size=(500, 150), style=wx.TE_MULTILINE)
         self.checkers_notes = wx.TextCtrl(self, -1, "Checkers's notes", size=(500, 150), style=wx.TE_MULTILINE)
@@ -55,36 +56,34 @@ class Fpanel(wx.Panel):
         self.chker_sgn_btn.Bind(wx.EVT_BUTTON, self.chkerSign)
         self.chker_clr_btn.Bind(wx.EVT_BUTTON, self.chkerClear)
         
-        self.title.Bind(wx.EVT_BUTTON, self.updateTitle)
-        
+        self.catchment.Bind(wx.EVT_BUTTON, self.updateTitle)
+        self.location.Bind(wx.EVT_BUTTON, self.updateTitle)
         
         # use gridbagsizer for layout of widgets
         sizer = wx.GridBagSizer(vgap=10, hgap=10)
         sizer.Add(self.title_label, pos=(0,0))
         sizer.Add(purpose_label, pos=(2,0))
-
         
         sizer.Add(self.author_signature,pos=(5,0),span=(1,2))
         sizer.Add(self.checker_signature,pos=(8,0),span=(1,2))
-
         
         sizer.Add(self.author_sgn_btn,pos=(5,3), span=(1,1))
         sizer.Add(self.author_clr_btn,pos=(5,4), span=(1,1))
         sizer.Add(self.chker_sgn_btn,pos=(8,3), span=(1,1))
         sizer.Add(self.chker_clr_btn,pos=(8,4), span=(1,1))
         
-        sizer.Add(self.title, pos=(1,0), span=(1,5))
-        sizer.Add(self.purpose, pos=(3,0), span=(1,5))
-        sizer.Add(self.author_notes, pos=(4, 0), span=(1,5))
-        sizer.Add(self.checkers_notes, pos=(7, 0), span=(1,5))
-        
-        
+        sizer.Add(self.catchment, pos=(1,0), span=(1,2))
+        sizer.Add(self.location, pos=(1,2), span=(1,2))
+        sizer.Add(self.purpose, pos=(3,0), span=(1,2))
+        sizer.Add(self.author_notes, pos=(4, 0), span=(1,2))
+        sizer.Add(self.checkers_notes, pos=(7, 0), span=(1,2))
+                
         # use boxsizer to add border around sizer
         border = wx.BoxSizer()
         border.Add(sizer, 0, wx.ALL, 20)
         self.SetSizerAndFit(border)
         self.Fit()
-    
+        
     def generateSignature(self):
       #username=os.environ['USERNAME']
       username=wx.GetUserName() 
@@ -94,7 +93,8 @@ class Fpanel(wx.Panel):
     
     
     def updateTitle(self,event):
-      self.store['title']=self.title.GetValue()
+      config.analysis.catchment.watercourse=str(self.catchment.GetValue())
+      config.analysis.catchment.location =str(self.location.GetValue())
     
     def authorSign(self,event):
       signature=self.generateSignature()
