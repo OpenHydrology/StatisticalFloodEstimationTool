@@ -31,13 +31,15 @@ from floodestimation.loaders import load_catchment
 class Fpanel(wx.Panel):
     def __init__(self, parent,p):
         wx.Panel.__init__(self, parent)
-        #title_label = wx.StaticText(self, -1, p.title.GetValue())
+        self.inside_load=False
+        
         self.parent =parent
         self.p=p
+        
         #self.title_label = wx.StaticText(self, -1, "-")
         outlet_label = wx.StaticText(self, -1, "Outlet grid ref")
         centroid_label = wx.StaticText(self, -1, "Centroid grid ref" )                       
-        carea_label = wx.StaticText(self, -1, "DTM_AREA")
+        carea_label = wx.StaticText(self, -1, "AREA")
         altbar_label = wx.StaticText(self, -1, "ALTBAR")
         aspbar_label = wx.StaticText(self, -1, "ASPBAR")
         aspvar_label = wx.StaticText(self, -1, "ASPVAR")
@@ -120,6 +122,10 @@ class Fpanel(wx.Panel):
         
         #  Assign actions to buttons
         self.load_btn.Bind(wx.EVT_BUTTON, self.onLoadCds)
+        
+        # Assign actions to update of cds fields
+        self.carea.Bind(wx.EVT_TEXT,self.onChangeCds)
+        self.farl.Bind(wx.EVT_TEXT,self.onChangeCds)
         
         # use gridbagsizer for layout of widgets
         sizer = wx.GridBagSizer(vgap=1, hgap=10)
@@ -217,8 +223,50 @@ class Fpanel(wx.Panel):
       #self.title_label.SetLabel(str(self.p.title.GetValue()))
       if loadBox.ShowModal() == wx.ID_OK:
         filePath = loadBox.GetPath()
+        self.inside_load = True
+        self.syncCdsTab(filePath)
+      loadBox.Destroy()
+      self.inside_load=False
+      
+      self.Refresh()
+      self.Update()
+
+    def onChangeCds(self,event):
+      if self.inside_load is False:
+        config.analysis.catchment.country = str(self.outlet_grid)
+        config.analysis.catchment.descriptors.ihdtm_ngr.x = int(self.outlet_x.GetValue())
+        config.analysis.catchment.descriptors.ihdtm_ngr.y = int(self.outlet_y.GetValue())
         
-        #config.target_catchment = load_catchment(filePath)
+        config.analysis.catchment.descriptors.centroid_ngr.x = float(self.centroid_x.GetValue())
+        config.analysis.catchment.descriptors.centroid_ngr.y = float(self.centroid_y.GetValue())
+        
+        config.analysis.catchment.descriptors.dtm_area = float(self.carea.GetValue())
+
+        config.analysis.catchment.descriptors.altbar = float(self.altbar.GetValue())
+        config.analysis.catchment.descriptors.aspbar = float(self.aspbar.GetValue())
+        config.analysis.catchment.descriptors.aspvar = float(self.aspvar.GetValue())
+        config.analysis.catchment.descriptors.bfihost = float(self.bfihost.GetValue())
+        config.analysis.catchment.descriptors.dplbar = float(self.dplbar.GetValue())
+        config.analysis.catchment.descriptors.dpsbar = float(self.dpsbar.GetValue())
+        
+        config.analysis.catchment.descriptors.farl = float(self.farl.GetValue())
+        config.analysis.catchment.descriptors.ldp = float(self.ldp.GetValue())
+        config.analysis.catchment.descriptors.propwet = float(self.propwet.GetValue())
+        config.analysis.catchment.descriptors.saar = float(self.saar.GeValue())
+        config.analysis.catchment.descriptors.sprhost = float(self.sprhost.GetValue())
+        config.analysis.catchment.descriptors.fpext = float(self.fpext.GetValue())
+
+        config.analysis.catchment.descriptors.urbconc1990 =  float(self.urbconc1990.GetValue())
+        config.analysis.catchment.descriptors.urbext1990 = float(self.urbext1990.GetValue())
+        config.analysis.catchment.descriptors.urbloc1990 =  float(self.urbloc1990.GetValue())
+
+        config.analysis.catchment.descriptors.urbloc2000 =  float(self.urbloc2000.GetValue())
+        config.analysis.catchment.descriptors.urbconc2000 = float(self.urbconc2000.GetValue())
+        config.analysis.catchment.descriptors.urbext2000 =  float(self.urbext2000.GetValue())
+        
+        
+
+    def syncCdsTab(self,filePath):
         config.analysis.cd3_file_path = filePath
         config.analysis.catchment = load_catchment(filePath)
         
@@ -267,8 +315,3 @@ class Fpanel(wx.Panel):
           self.urbloc2000.SetLabel(str('-'))
           self.urbconc2000.SetLabel(str('-'))
           self.urbext2000.SetLabel(str('-'))
-      
-      loadBox.Destroy()
-      
-      self.Refresh()
-      self.Update()

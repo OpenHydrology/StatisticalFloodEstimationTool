@@ -58,8 +58,8 @@ class Analysis(object):
         self.results['qmed_all_methods'] = self.qmed_analysis.qmed_all_methods()
         self.results['qmed'] = self.qmed
         
-        self.results['qmed_all_methods']['qmed_2008_unadj']=self.qmed_analysis._qmed_from_descriptors_2008(False, None)
-        self.results['qmed_all_methods']['qmed_1999_unadj']=self.qmed_analysis._qmed_from_descriptors_1999(as_rural=True)      
+        #self.results['qmed_all_methods']['qmed_2008_unadj']=self.qmed_analysis._qmed_from_descriptors_2008(False, None)
+        #self.results['qmed_all_methods']['qmed_1999_unadj']=self.qmed_analysis._qmed_from_descriptors_1999(as_rural=True)      
         
         #print(self.results)
 

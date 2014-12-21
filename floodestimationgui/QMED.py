@@ -230,8 +230,8 @@ class Fpanel(wx.Panel):
       
       qmedDict = config.analysis.results['qmed_all_methods']
       
-      self.qmed_cds1999.SetLabel(str(qmedDict['qmed_1999_unadj']))
-      self.qmed_cds2008.SetLabel(str(qmedDict['qmed_2008_unadj']))
+      self.qmed_cds1999.SetLabel(str(qmedDict['descriptors']))
+      self.qmed_cds2008.SetLabel(str(qmedDict['descriptors_1999']))
       self.qmed_obs_amax.SetLabel(str(qmedDict['amax_records']))
       self.qmed_obs_pot.SetLabel(str(qmedDict['pot_records']))
       self.qmed_areaOnly.SetLabel(str(qmedDict['area']))
