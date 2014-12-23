@@ -27,6 +27,7 @@ Tab used to store/collect catchment descriptors
 import wx,os,time
 import config
 from floodestimation.loaders import load_catchment
+from floodestimation.entities import Point
 
 class Fpanel(wx.Panel):
     def __init__(self, parent,p):
@@ -257,12 +258,13 @@ class Fpanel(wx.Panel):
 
     def onChangeCds(self,event):
       if self.inside_load is False:
-        config.analysis.catchment.country = str(self.outlet_grid)
+        config.analysis.catchment.country = str(self.outlet_grid.GetValue())
         config.analysis.catchment.descriptors.ihdtm_ngr.x = int(self.outlet_x.GetValue())
         config.analysis.catchment.descriptors.ihdtm_ngr.y = int(self.outlet_y.GetValue())
         
         config.analysis.catchment.descriptors.centroid_ngr.x = int(self.centroid_x.GetValue())
         config.analysis.catchment.descriptors.centroid_ngr.y = int(self.centroid_y.GetValue())
+        config.analysis.catchment.descriptors.centroid_ngr = Point(int(self.centroid_x.GetValue()), int(self.centroid_y.GetValue()))
         
         config.analysis.catchment.descriptors.dtm_area = float(self.carea.GetValue())
 
