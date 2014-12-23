@@ -110,8 +110,10 @@ class Fpanel(wx.Panel):
       #self.Bind(wx.EVT_RADIOBUTTON, self.SetUpdate, id=self.distance_decay_update.GetId())
       #self.Bind(wx.EVT_RADIOBUTTON, self.SetUpdate, id=self.direct_transfer_update.GetId())
       
+      self.local_qmed_adjustment_label = wx.StaticText(self, -1, "Local QMED adjustment")
       self.locally_adjusted_qmed_label = wx.StaticText(self, -1, "Locally adjusted QMED")
       self.locally_adjusted_qmed = wx.TextCtrl(self, -1, "-", style =wx.TE_READONLY)
+      self.local_qmed_adjustment = wx.TextCtrl(self, -1, "-", style =wx.TE_READONLY)
       
       self.update_for_urb_chk = wx.CheckBox(self,-1,'Update for urbanisation')
       self.update_for_urb_chk.Bind(wx.EVT_CHECKBOX, self.SetUrbanChk, id=self.update_for_urb_chk.GetId())
@@ -180,6 +182,8 @@ class Fpanel(wx.Panel):
       sizer.Add(self.distance_decay_update, pos=(12,0),span=(1,2))
       sizer.Add(self.direct_transfer_update, pos=(13,0),span=(1,2))
       
+      sizer.Add(self.local_qmed_adjustment_label, pos=(12,2),span=(1,1))
+      sizer.Add(self.local_qmed_adjustment, pos=(12,3),span=(1,1))
       sizer.Add(self.locally_adjusted_qmed_label, pos=(13,2),span=(1,1))
       sizer.Add(self.locally_adjusted_qmed, pos=(13,3),span=(1,1))
       
@@ -211,6 +215,8 @@ class Fpanel(wx.Panel):
         self.keep_rural = False
       else:
         self.keep_rural = True
+      self.calcQMeds()
+      
       
     def SetVal(self, event):
       if bool(self.rb1.GetValue()) == True:
@@ -228,7 +234,7 @@ class Fpanel(wx.Panel):
       if bool(self.rb7.GetValue()) == True:
         self.qmed_method = 'user'
       try:
-        self.selected_unadj_qmed.SetLabel(str(config.analysis.qmed_analysis.qmed(method=self.qmed_method,as_rural=True,donor_catchments=False)))
+        self.selected_unadj_qmed.SetLabel(str(config.analysis.qmed_analysis.qmed(method=self.qmed_method,as_rural=True,donor_catchments=[])))
       except:
         self.selected_unadj_qmed.SetLabel(str(config.analysis.qmed_analysis.qmed(method=self.qmed_method)))
         
@@ -240,27 +246,25 @@ class Fpanel(wx.Panel):
       self.calcQMeds()
       self.refreshDonors()
       self.refreshUrbanisation()
+      self.updateAdopted()
 
     def refreshUrbanisation(self):
       self.urban_adjustment_factor.SetLabel(str(config.analysis.qmed_analysis.urban_adj_factor()))
       #self.urban_adjustment_factor.SetLabel(str(config.analysis.qmed_analysis._pruaf()))
       self.urban_expansion_factor.SetLabel(str('Not calculated'))
       
-      self.adopted_qmed.SetLabel(str(config.analysis.qmed_analysis.qmed(method=self.qmed_method,as_rural=self.keep_rural,donor_catchments=None)))
 
     def calcQMeds(self):
       config.analysis.run_qmed_analysis()
       
       qmedDict = config.analysis.results['qmed_all_methods']
       
-      self.qmed_cds1999.SetLabel(str(config.analysis.qmed_analysis.qmed('descriptors_1999',as_rural=True)))
-      self.qmed_cds2008.SetLabel(str(config.analysis.qmed_analysis.qmed('descriptors',as_rural=True,donor_catchments=False)))
+      self.qmed_cds1999.SetLabel(str(config.analysis.qmed_analysis.qmed('descriptors_1999',as_rural=True,donor_catchments=[])))
+      self.qmed_cds2008.SetLabel(str(config.analysis.qmed_analysis.qmed('descriptors',as_rural=True,donor_catchments=[])))
       self.qmed_obs_amax.SetLabel(str(qmedDict['amax_records']))
       self.qmed_obs_pot.SetLabel(str(qmedDict['pot_records']))
       self.qmed_areaOnly.SetLabel(str(config.analysis.qmed_analysis.qmed('area')))
       self.qmed_geom.SetLabel(str(qmedDict['channel_width']))
-      
-      #db_session.close()
 
       self.Refresh()
       self.Update()    
@@ -270,16 +274,16 @@ class Fpanel(wx.Panel):
       search_distance = float(self.station_search_distance.GetValue())
       config.analysis.qmed_analysis.idw_power = float(self.idw_weight.GetValue())
       
-      donors = config.analysis.qmed_analysis.find_donor_catchments(search_limit, search_distance)
+      self.suggested_donors = config.analysis.qmed_analysis.find_donor_catchments(search_limit, search_distance)
       
       donors_details=list()
-      weights = config.analysis.qmed_analysis._donor_weights(donors)
+      weights = config.analysis.qmed_analysis._donor_weights(self.suggested_donors)
       
       self.list.BestSize
       self.list.DeleteAllItems()
       
       i = 0
-      for donor in donors:
+      for donor in self.suggested_donors:
         donors_details.append([donor,config.analysis.qmed_analysis._donor_adj_factor(donor),config.analysis.qmed_analysis._error_correlation(donor),weights[i]])       
         i=i+1
      
@@ -287,5 +291,17 @@ class Fpanel(wx.Panel):
         index = self.list.InsertStringItem(0, str(donor[0]))
         self.list.SetItem(index, 1, str(donor[1]))
         self.list.SetItem(index, 2, str(donor[2]))
-        self.list.SetItem(index, 3, str(donor[3]))                            
+        self.list.SetItem(index, 3, str(donor[3]))
+        self.list.CheckItem(index,check=True)                            
+    
+      self.adopted_donors = self.suggested_donors  # Adopted donors to in the future be based on which ones are selected.  Everytime the search criteria or cds are refreshed the selected list would be reset
+    
+    def updateAdopted(self):
+      locally_adjusted_qmed = config.analysis.qmed_analysis.qmed(method=self.qmed_method,as_rural=self.keep_rural,donor_catchments=self.adopted_donors)
+      unadjusted_qmed = config.analysis.qmed_analysis.qmed(method=self.qmed_method,as_rural=self.keep_rural,donor_catchments=[])
+      adjustment = locally_adjusted_qmed/unadjusted_qmed
+      self.locally_adjusted_qmed.SetValue(str(locally_adjusted_qmed))
+      self.local_qmed_adjustment.SetValue(str(adjustment))
+      
+      self.adopted_qmed.SetLabel(str(config.analysis.qmed_analysis.qmed(method=self.qmed_method,as_rural=self.keep_rural,donor_catchments=self.adopted_donors)))      
 
