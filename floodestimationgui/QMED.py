@@ -50,6 +50,7 @@ class Fpanel(wx.Panel):
       db_session.close()
       
       self.qmed_method = 'best'
+      self.donor_search_criteria_refreshed = True
       
       self.adoptedQmed = '-'
       
@@ -244,7 +245,9 @@ class Fpanel(wx.Panel):
     def onRefresh(self,event):
       self.updateUrbanisation()
       self.calcQMeds()
-      self.refreshDonors()
+      if self.donor_search_criteria_refreshed:
+        self.refreshDonors()
+      self.identifyAdoptedDonors()
       self.refreshUrbanisation()
       self.updateAdopted()
 
@@ -295,7 +298,17 @@ class Fpanel(wx.Panel):
         self.list.CheckItem(index,check=True)                            
     
       self.adopted_donors = self.suggested_donors  # Adopted donors to in the future be based on which ones are selected.  Everytime the search criteria or cds are refreshed the selected list would be reset
+      self.donor_search_criteria_refreshed = False
     
+    def identifyAdoptedDonors(self):
+      self.adopted_donors = []
+      for i in range(self.list.GetItemCount()):
+        if self.list.IsChecked(i):
+          checked_item = self.list.GetItemText(i,col=0)
+          for site in self.suggested_donors:
+            if str(site) == checked_item:
+              self.adopted_donors.append(site)   
+      
     def updateAdopted(self):
       locally_adjusted_qmed = config.analysis.qmed_analysis.qmed(method=self.qmed_method,as_rural=self.keep_rural,donor_catchments=self.adopted_donors)
       unadjusted_qmed = config.analysis.qmed_analysis.qmed(method=self.qmed_method,as_rural=self.keep_rural,donor_catchments=[])
