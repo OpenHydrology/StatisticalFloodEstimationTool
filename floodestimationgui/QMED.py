@@ -97,9 +97,12 @@ class Fpanel(wx.Panel):
       self.Bind(wx.EVT_RADIOBUTTON, self.SetVal, id=self.rb6.GetId())
       self.Bind(wx.EVT_RADIOBUTTON, self.SetVal, id=self.rb7.GetId())
 
-      self.station_search_distance = wx.TextCtrl(self, -1, "250.0")
-      self.station_limit = wx.TextCtrl(self, -1, "6")
+      self.station_search_distance = wx.TextCtrl(self, -1, "500.0")
+      self.station_limit = wx.TextCtrl(self, -1, "5")
       self.idw_weight = wx.TextCtrl(self, -1, "3")
+      
+      self.station_search_distance.Bind(wx.EVT_TEXT, self.UpdateDonorCriteria)
+      self.station_limit.Bind(wx.EVT_TEXT, self.UpdateDonorCriteria)
       
       #self.calcQMeds()
       
@@ -206,6 +209,21 @@ class Fpanel(wx.Panel):
       border.Add(sizer, 0, wx.ALL, 20)
       self.SetSizerAndFit(border)
       self.Fit()
+
+    def SetUpdateMethod(self,event):
+      
+      self.updateMethod()
+      self.refreshDonors()
+      
+    def updateMethod(self):
+      self.donor_search_criteria_refreshed = True
+      if self.distance_decay_update.GetValue():
+        config.analysis.qmed_analysis.donor_weighting = 'idw'
+      elif self.direct_transfer_update.GetValue():
+        config.analysis.qmed_analysis.donor_weighting = 'equal'
+      elif self.dont_update.GetValue():
+        self.search_limit = 0
+        self.station_limit.SetValue(str(0))
     
     def SetUrbanChk(self,event):
       self.updateUrbanisation()
@@ -245,6 +263,7 @@ class Fpanel(wx.Panel):
     def onRefresh(self,event):
       self.updateUrbanisation()
       self.calcQMeds()
+      self.updateMethod()
       if self.donor_search_criteria_refreshed:
         self.refreshDonors()
       self.identifyAdoptedDonors()
@@ -273,11 +292,12 @@ class Fpanel(wx.Panel):
       self.Update()    
     
     def refreshDonors(self):
-      search_limit = float(self.station_limit.GetValue())
-      search_distance = float(self.station_search_distance.GetValue())
+      self.search_limit = int(self.station_limit.GetValue())
+      self.search_distance = float(self.station_search_distance.GetValue())
       config.analysis.qmed_analysis.idw_power = float(self.idw_weight.GetValue())
+      print(self.search_limit,self.search_distance,config.analysis.qmed_analysis.idw_power)
       
-      self.suggested_donors = config.analysis.qmed_analysis.find_donor_catchments(search_limit, search_distance)
+      self.suggested_donors = config.analysis.qmed_analysis.find_donor_catchments(self.search_limit, self.search_distance)
       
       donors_details=list()
       weights = config.analysis.qmed_analysis._donor_weights(self.suggested_donors)
@@ -308,6 +328,9 @@ class Fpanel(wx.Panel):
           for site in self.suggested_donors:
             if str(site) == checked_item:
               self.adopted_donors.append(site)   
+    
+    def UpdateDonorCriteria(self,event):
+      self.donor_search_criteria_refreshed = True
       
     def updateAdopted(self):
       locally_adjusted_qmed = config.analysis.qmed_analysis.qmed(method=self.qmed_method,as_rural=self.keep_rural,donor_catchments=self.adopted_donors)

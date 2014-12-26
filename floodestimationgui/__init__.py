@@ -50,7 +50,6 @@ class Analysis(object):
 
     def run_qmed_analysis(self):
         self.qmed_analysis = QmedAnalysis(self.catchment, self.gauged_catchments)
-        
         self.results = self.qmed_analysis.results_log
         self.results['qmed_all_methods'] = self.qmed_analysis.qmed_all_methods()
         #self.results['qmed'] = self.qmed
