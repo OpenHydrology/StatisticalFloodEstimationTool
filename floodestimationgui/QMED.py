@@ -54,8 +54,8 @@ class Fpanel(wx.Panel):
       
       self.adoptedQmed = '-'
       
-      self.calc_obs_amax_btn = wx.Button(self, -1, ' LOAD AMAX SERIES ')
-      self.calc_obs_pot_btn = wx.Button(self, -1, ' LOAD POT SERIES ')
+      self.calc_obs_amax_btn = wx.Button(self, -1, ' AMAX SERIES ')
+      self.calc_obs_pot_btn = wx.Button(self, -1, ' POT SERIES ')
       self.refresh_calcs_btn = wx.Button(self, -1, ' REFRESH CALCS ')  
       
       self.qmed_notes = wx.TextCtrl(self, -1, "Notes on QMED", size=(350,150),style=wx.TE_MULTILINE)
@@ -107,7 +107,7 @@ class Fpanel(wx.Panel):
       #self.calcQMeds()
       
       self.distance_decay_update= wx.RadioButton(self, -1, "Decaying with distance", style=wx.RB_GROUP)
-      self.direct_transfer_update  = wx.RadioButton(self, -1, 'Direct transfer')
+      self.direct_transfer_update  = wx.RadioButton(self, -1, 'Equal weighting')
       self.dont_update  = wx.RadioButton(self, -1, "Don't update")
       
       #self.Bind(wx.EVT_RADIOBUTTON, self.SetUpdate, id=self.dont_update.GetId())
@@ -171,9 +171,15 @@ class Fpanel(wx.Panel):
       self.table = wx.Panel(self, -1)
       self.list = CheckListCtrl(self.table)
       self.list.InsertColumn(0, 'STATION')
-      self.list.InsertColumn(1, 'DONOR ADJUSTMENT FACTOR')
-      self.list.InsertColumn(2, 'ERROR CORRELATION')
-      self.list.InsertColumn(3, 'WEIGHT')
+      self.list.InsertColumn(1, 'DISTANCE')
+      self.list.InsertColumn(2, 'ADJUSTMENT FACTOR')
+      self.list.InsertColumn(3, 'ERROR CORRELATION')
+      self.list.InsertColumn(4, 'WEIGHT')
+      self.list.SetColumnWidth(0, 250)
+      self.list.SetColumnWidth(1, 100)
+      self.list.SetColumnWidth(2, 100)
+      self.list.SetColumnWidth(3, 100)
+      self.list.SetColumnWidth(4, 100)
       
       sizer.Add(self.table, pos=(9,0),span=(1,6),flag=wx.EXPAND)
       sizer.Add(self.station_search_distance_label, pos=(10,0),span=(1,1))
@@ -295,7 +301,6 @@ class Fpanel(wx.Panel):
       self.search_limit = int(self.station_limit.GetValue())
       self.search_distance = float(self.station_search_distance.GetValue())
       config.analysis.qmed_analysis.idw_power = float(self.idw_weight.GetValue())
-      print(self.search_limit,self.search_distance,config.analysis.qmed_analysis.idw_power)
       
       self.suggested_donors = config.analysis.qmed_analysis.find_donor_catchments(self.search_limit, self.search_distance)
       
@@ -307,7 +312,7 @@ class Fpanel(wx.Panel):
       
       i = 0
       for donor in self.suggested_donors:
-        donors_details.append([donor,config.analysis.qmed_analysis._donor_adj_factor(donor),config.analysis.qmed_analysis._error_correlation(donor),weights[i]])       
+        donors_details.append([donor,donor.dist,config.analysis.qmed_analysis._donor_adj_factor(donor),config.analysis.qmed_analysis._error_correlation(donor),weights[i]])       
         i=i+1
      
       for donor in donors_details[::-1]:
@@ -315,6 +320,7 @@ class Fpanel(wx.Panel):
         self.list.SetItem(index, 1, str(donor[1]))
         self.list.SetItem(index, 2, str(donor[2]))
         self.list.SetItem(index, 3, str(donor[3]))
+        self.list.SetItem(index, 4, str(donor[4]))
         self.list.CheckItem(index,check=True)                            
     
       self.adopted_donors = self.suggested_donors  # Adopted donors to in the future be based on which ones are selected.  Everytime the search criteria or cds are refreshed the selected list would be reset
