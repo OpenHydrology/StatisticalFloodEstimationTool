@@ -88,7 +88,7 @@ class Fpanel(wx.Panel):
         self.urbext2000 = wx.TextCtrl(self, -1, "0")
         self.urbloc1990 = wx.TextCtrl(self, -1, "0")
         self.urbloc2000 = wx.TextCtrl(self, -1, "0")
-        self.chnl_width = wx.TextCtrl(self, -1, "0")
+        self.chnl_width = wx.TextCtrl(self, -1, "None")
         self.assessment_year = wx.TextCtrl(self, -1, time.asctime(time.localtime())[-4:])
         
         self.outlet_note = wx.TextCtrl(self, -1, "",size=(200,25))
@@ -150,7 +150,7 @@ class Fpanel(wx.Panel):
         self.urbext2000.Bind(wx.EVT_TEXT,self.onChangeCds)
         self.urbloc1990.Bind(wx.EVT_TEXT,self.onChangeCds)
         self.urbloc2000.Bind(wx.EVT_TEXT,self.onChangeCds)
-        #self.chnl_width.Bind(wx.EVT_TEXT,self.onChangeCds)     
+        self.chnl_width.Bind(wx.EVT_TEXT,self.onChangeCds)     
         
         # use gridbagsizer for layout of widgets
         sizer = wx.GridBagSizer(vgap=1, hgap=10)
@@ -255,40 +255,137 @@ class Fpanel(wx.Panel):
 
     def onChangeCds(self,event):
       if self.inside_load is False:
-        config.analysis.catchment.country = str(self.outlet_grid.GetValue())
-        config.analysis.catchment.descriptors.ihdtm_ngr.x = int(self.outlet_x.GetValue())
-        config.analysis.catchment.descriptors.ihdtm_ngr.y = int(self.outlet_y.GetValue())
         
-        config.analysis.catchment.descriptors.centroid_ngr.x = int(self.centroid_x.GetValue())
-        config.analysis.catchment.descriptors.centroid_ngr.y = int(self.centroid_y.GetValue())
-        config.analysis.catchment.descriptors.centroid_ngr = Point(int(self.centroid_x.GetValue()), int(self.centroid_y.GetValue()))
+        try:
+          config.analysis.catchment.country = str(self.outlet_grid.GetValue())
+        except:
+          pass
         
-        config.analysis.catchment.descriptors.dtm_area = float(self.carea.GetValue())
-
-        config.analysis.catchment.descriptors.altbar = float(self.altbar.GetValue())
-        config.analysis.catchment.descriptors.aspbar = float(self.aspbar.GetValue())
-        config.analysis.catchment.descriptors.aspvar = float(self.aspvar.GetValue())
-        config.analysis.catchment.descriptors.bfihost = float(self.bfihost.GetValue())
-        config.analysis.catchment.descriptors.dplbar = float(self.dplbar.GetValue())
-        config.analysis.catchment.descriptors.dpsbar = float(self.dpsbar.GetValue())
+        try:
+          config.analysis.catchment.descriptors.ihdtm_ngr.x = int(self.outlet_x.GetValue())
+        except:
+          pass
         
-        config.analysis.catchment.descriptors.farl = float(self.farl.GetValue())
-        config.analysis.catchment.descriptors.ldp = float(self.ldp.GetValue())
-        config.analysis.catchment.descriptors.propwet = float(self.propwet.GetValue())
-        config.analysis.catchment.descriptors.saar = float(self.saar.GetValue())
-        config.analysis.catchment.descriptors.sprhost = float(self.sprhost.GetValue())
-        config.analysis.catchment.descriptors.fpext = float(self.fpext.GetValue())
-
-        config.analysis.catchment.descriptors.urbconc1990 =  float(self.urbconc1990.GetValue())
-        config.analysis.catchment.descriptors.urbext1990 = float(self.urbext1990.GetValue())
-        config.analysis.catchment.descriptors.urbloc1990 =  float(self.urbloc1990.GetValue())
-
-        config.analysis.catchment.descriptors.urbloc2000 =  float(self.urbloc2000.GetValue())
-        config.analysis.catchment.descriptors.urbconc2000 = float(self.urbconc2000.GetValue())
-        config.analysis.catchment.descriptors.urbext2000 =  float(self.urbext2000.GetValue())
+        try:
+          config.analysis.catchment.descriptors.ihdtm_ngr.y = int(self.outlet_y.GetValue())
+        except:
+          pass
         
+        try:
+          config.analysis.catchment.descriptors.centroid_ngr.x = int(self.centroid_x.GetValue())
+        except:
+          pass
+                
+        try:
+          config.analysis.catchment.descriptors.centroid_ngr.y = int(self.centroid_y.GetValue())
+        except:
+          pass
+                
+        try:
+          config.analysis.catchment.descriptors.centroid_ngr = Point(int(self.centroid_x.GetValue()), int(self.centroid_y.GetValue()))
+        except:
+          pass
+                
+        try:
+          config.analysis.catchment.descriptors.dtm_area = float(self.carea.GetValue())
+        except:
+          pass
         
-
+        try:
+          config.analysis.catchment.descriptors.altbar = float(self.altbar.GetValue())
+        except:
+          pass
+                
+        try:
+          config.analysis.catchment.descriptors.aspbar = float(self.aspbar.GetValue())
+        except:
+          pass
+                
+        try:
+          config.analysis.catchment.descriptors.aspvar = float(self.aspvar.GetValue())
+        except:
+          pass
+                
+        try:
+          config.analysis.catchment.descriptors.bfihost = float(self.bfihost.GetValue())
+        except:
+          pass
+                
+        try:
+          config.analysis.catchment.descriptors.dplbar = float(self.dplbar.GetValue())
+        except:
+          pass
+                
+        try:
+          config.analysis.catchment.descriptors.dpsbar = float(self.dpsbar.GetValue())
+        except:
+          pass
+                
+        try:
+          config.analysis.catchment.descriptors.farl = float(self.farl.GetValue())
+        except:
+          pass
+                
+        try:
+          config.analysis.catchment.descriptors.ldp = float(self.ldp.GetValue())
+        except:
+          pass
+                
+        try:
+          config.analysis.catchment.descriptors.propwet = float(self.propwet.GetValue())
+        except:
+          pass
+                
+        try:
+          config.analysis.catchment.descriptors.saar = float(self.saar.GetValue())
+        except:
+          pass
+                
+        try:
+          config.analysis.catchment.descriptors.sprhost = float(self.sprhost.GetValue())
+        except:
+          pass
+                
+        try:
+          config.analysis.catchment.descriptors.fpext = float(self.fpext.GetValue())
+        except:
+          pass
+        
+        try:
+          config.analysis.catchment.descriptors.urbconc1990 =  float(self.urbconc1990.GetValue())
+        except:
+          pass
+                
+        try:
+          config.analysis.catchment.descriptors.urbext1990 = float(self.urbext1990.GetValue())
+        except:
+          pass
+                
+        try:
+          config.analysis.catchment.descriptors.urbloc1990 =  float(self.urbloc1990.GetValue())
+        except:
+          pass
+        
+        try:
+          config.analysis.catchment.descriptors.urbloc2000 =  float(self.urbloc2000.GetValue())
+        except:
+          pass
+                
+        try:
+          config.analysis.catchment.descriptors.urbconc2000 = float(self.urbconc2000.GetValue())
+        except:
+          pass
+                
+        try:
+          config.analysis.catchment.descriptors.urbext2000 =  float(self.urbext2000.GetValue())
+        except:
+          pass
+                
+        try:
+          config.analysis.catchment.channel_width = float(self.chnl_width.GetValue())
+        except:
+          pass
+        
     def syncCdsTab(self,filePath):
         config.analysis.cd3_file_path = filePath
         config.analysis.catchment = load_catchment(filePath)
