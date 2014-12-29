@@ -32,6 +32,7 @@ from floodestimation import db
 from floodestimation.collections import CatchmentCollections
 from floodestimation.analysis import QmedAnalysis
 from AMAX import AmaxFrame
+from floodestimation import parsers
 
 
 class CheckListCtrl(wx.ListCtrl, CheckListCtrlMixin, ListCtrlAutoWidthMixin):
@@ -362,4 +363,10 @@ class Fpanel(wx.Panel):
       AmaxFrame(self).Show()
       
     def pot_area(self,event):
-      pass
+      loadBox = wx.FileDialog(self,"Load POT file", "", "", "Peaks over threshold file (*.pt;*.csv)|*.pt;*.csv", wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
+      
+      if loadBox.ShowModal() == wx.ID_OK:
+        config.analysis.catchment.pot_records = []
+        filePath = loadBox.GetPath()
+        config.analysis.catchment.pot_records = parsers.PotParser().parse(filePath)
+      loadBox.Destroy()
