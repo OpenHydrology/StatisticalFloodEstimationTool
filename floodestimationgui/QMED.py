@@ -340,13 +340,23 @@ class Fpanel(wx.Panel):
       self.donor_search_criteria_refreshed = True
       
     def updateAdopted(self):
-      locally_adjusted_qmed = config.analysis.qmed_analysis.qmed(method=self.qmed_method,as_rural=self.keep_rural,donor_catchments=self.adopted_donors)
-      unadjusted_qmed = config.analysis.qmed_analysis.qmed(method=self.qmed_method,as_rural=self.keep_rural,donor_catchments=[])
+      print(self.qmed_method)
+      if self.qmed_method == 'amax_records' or self.qmed_method == 'pot_records':
+        locally_adjusted_qmed = config.analysis.qmed_analysis.qmed(method=self.qmed_method)
+        unadjusted_qmed = locally_adjusted_qmed
+        self.adopted_qmed.SetLabel(str(config.analysis.qmed_analysis.qmed(method=self.qmed_method)))      
+      elif self.qmed_method == 'descriptors' or self.qmed_method == 'descriptors_1999':
+        unadjusted_qmed = config.analysis.qmed_analysis.qmed(method=self.qmed_method,as_rural=self.keep_rural,donor_catchments=[])
+        locally_adjusted_qmed = config.analysis.qmed_analysis.qmed(method=self.qmed_method,as_rural=self.keep_rural,donor_catchments=self.adopted_donors)
+        self.adopted_qmed.SetLabel(str(config.analysis.qmed_analysis.qmed(method=self.qmed_method,as_rural=self.keep_rural,donor_catchments=self.adopted_donors)))
+      else:
+        unadjusted_qmed = config.analysis.qmed_analysis.qmed(method=self.qmed_method)
+        locally_adjusted_qmed = config.analysis.qmed_analysis.qmed(method=self.qmed_method)
+        self.adopted_qmed.SetLabel(str(config.analysis.qmed_analysis.qmed(method=self.qmed_method)))  
+
       adjustment = locally_adjusted_qmed/unadjusted_qmed
       self.locally_adjusted_qmed.SetValue(str(locally_adjusted_qmed))
       self.local_qmed_adjustment.SetValue(str(adjustment))
-      
-      self.adopted_qmed.SetLabel(str(config.analysis.qmed_analysis.qmed(method=self.qmed_method,as_rural=self.keep_rural,donor_catchments=self.adopted_donors)))      
 
     def amax_area(self,event):
       AmaxFrame(self).Show()
