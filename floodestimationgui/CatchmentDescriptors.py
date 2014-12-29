@@ -241,11 +241,8 @@ class Fpanel(wx.Panel):
         self.Fit()
         
     def onLoadCds(self,event):
-      #loadBox = wx.FileDialog(self,message="Open",defaultDir=os.getcwd(),defaultFile="CSV files (*.csv)|*.csv",style=wx.OPEN)
-      #loadBox = wx.FileDialog(self, "Open cds file", "", "","Catchment descriptor files (*.cd3)|*.cd3", wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
       loadBox = wx.FileDialog(self,"Open cds file", "", "", "Catchment descriptor files (*.csv;*.cd3)|*.csv;*.cd3", wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
       
-      #self.title_label.SetLabel(str(self.p.title.GetValue()))
       if loadBox.ShowModal() == wx.ID_OK:
         filePath = loadBox.GetPath()
         self.inside_load = True

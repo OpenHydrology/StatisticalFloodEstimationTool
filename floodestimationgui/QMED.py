@@ -31,6 +31,7 @@ from floodestimation.loaders import load_catchment
 from floodestimation import db
 from floodestimation.collections import CatchmentCollections
 from floodestimation.analysis import QmedAnalysis
+from AMAX import AmaxFrame
 
 
 class CheckListCtrl(wx.ListCtrl, CheckListCtrlMixin, ListCtrlAutoWidthMixin):
@@ -55,7 +56,9 @@ class Fpanel(wx.Panel):
       self.adoptedQmed = '-'
       
       self.calc_obs_amax_btn = wx.Button(self, -1, ' AMAX SERIES ')
+      self.calc_obs_amax_btn.Bind(wx.EVT_BUTTON,self.amax_area)
       self.calc_obs_pot_btn = wx.Button(self, -1, ' POT SERIES ')
+      self.calc_obs_pot_btn.Bind(wx.EVT_BUTTON,self.pot_area)
       self.refresh_calcs_btn = wx.Button(self, -1, ' REFRESH CALCS ')  
       
       self.qmed_notes = wx.TextCtrl(self, -1, "Notes on QMED", size=(350,150),style=wx.TE_MULTILINE)
@@ -165,8 +168,6 @@ class Fpanel(wx.Panel):
       sizer.Add(self.rb5, pos=(4,2))
       sizer.Add(self.rb6, pos=(5,2))
       sizer.Add(self.rb7, pos=(6,2))
-      
-      
       
       self.table = wx.Panel(self, -1)
       self.list = CheckListCtrl(self.table)
@@ -347,3 +348,8 @@ class Fpanel(wx.Panel):
       
       self.adopted_qmed.SetLabel(str(config.analysis.qmed_analysis.qmed(method=self.qmed_method,as_rural=self.keep_rural,donor_catchments=self.adopted_donors)))      
 
+    def amax_area(self,event):
+      AmaxFrame(self).Show()
+      
+    def pot_area(self,event):
+      pass
