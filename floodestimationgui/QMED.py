@@ -366,7 +366,7 @@ class Fpanel(wx.Panel):
       self.locally_adjusted_qmed.SetValue(str(locally_adjusted_qmed))
       self.local_qmed_adjustment.SetValue(str(adjustment))
       
-      config.analysis.qmed_analysis.adopted_qmed_value = self.adopted_qmed.GetValue()
+      config.analysis.qmed_analysis.adopted_qmed_value = float(self.adopted_qmed.GetValue())
 
     def amax_area(self,event):
       AmaxFrame(self).Show()
