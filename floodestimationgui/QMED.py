@@ -260,10 +260,14 @@ class Fpanel(wx.Panel):
         self.qmed_method = 'channel_width'
       if bool(self.rb7.GetValue()) == True:
         self.qmed_method = 'user'
-      try:
+        config.analysis.qmed_analysis.adopted_qmed_value =  float(self.qmed_user.GetValue())
+        
+      if self.qmed_method == 'descriptors' or self.qmed_method == 'descriptors_1999':
         self.selected_unadj_qmed.SetLabel(str(config.analysis.qmed_analysis.qmed(method=self.qmed_method,as_rural=True,donor_catchments=[])))
-      except:
+      elif self.qmed_method== 'pot_records'or self.qmed_method == 'amax_records':
         self.selected_unadj_qmed.SetLabel(str(config.analysis.qmed_analysis.qmed(method=self.qmed_method)))
+      elif self.qmed_method=='user':
+        self.selected_unadj_qmed.SetLabel(self.qmed_user.GetValue())
         
       self.Refresh()
       self.Update()
@@ -341,7 +345,6 @@ class Fpanel(wx.Panel):
       self.donor_search_criteria_refreshed = True
       
     def updateAdopted(self):
-      print(self.qmed_method)
       if self.qmed_method == 'amax_records' or self.qmed_method == 'pot_records':
         locally_adjusted_qmed = config.analysis.qmed_analysis.qmed(method=self.qmed_method)
         unadjusted_qmed = locally_adjusted_qmed
@@ -350,6 +353,10 @@ class Fpanel(wx.Panel):
         unadjusted_qmed = config.analysis.qmed_analysis.qmed(method=self.qmed_method,as_rural=self.keep_rural,donor_catchments=[])
         locally_adjusted_qmed = config.analysis.qmed_analysis.qmed(method=self.qmed_method,as_rural=self.keep_rural,donor_catchments=self.adopted_donors)
         self.adopted_qmed.SetLabel(str(config.analysis.qmed_analysis.qmed(method=self.qmed_method,as_rural=self.keep_rural,donor_catchments=self.adopted_donors)))
+      elif self.qmed_method == 'user':
+        unadjusted_qmed = float(self.qmed_user.GetValue())
+        locally_adjusted_qmed = unadjusted_qmed
+        self.adopted_qmed.SetLabel(str(unadjusted_qmed))
       else:
         unadjusted_qmed = config.analysis.qmed_analysis.qmed(method=self.qmed_method)
         locally_adjusted_qmed = config.analysis.qmed_analysis.qmed(method=self.qmed_method)
@@ -358,6 +365,8 @@ class Fpanel(wx.Panel):
       adjustment = locally_adjusted_qmed/unadjusted_qmed
       self.locally_adjusted_qmed.SetValue(str(locally_adjusted_qmed))
       self.local_qmed_adjustment.SetValue(str(adjustment))
+      
+      config.analysis.qmed_analysis.adopted_qmed_value = self.adopted_qmed.GetValue()
 
     def amax_area(self,event):
       AmaxFrame(self).Show()
