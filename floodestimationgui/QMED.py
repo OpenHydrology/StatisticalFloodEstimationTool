@@ -226,9 +226,9 @@ class Fpanel(wx.Panel):
     def updateMethod(self):
       self.donor_search_criteria_refreshed = True
       if self.distance_decay_update.GetValue():
-        config.analysis.qmed_analysis.donor_weighting = 'idw'
+        self.donor_weighting = 'idw'
       elif self.direct_transfer_update.GetValue():
-        config.analysis.qmed_analysis.donor_weighting = 'equal'
+        self.donor_weighting = 'equal'
       elif self.dont_update.GetValue():
         self.search_limit = 0
         self.station_limit.SetValue(str(0))

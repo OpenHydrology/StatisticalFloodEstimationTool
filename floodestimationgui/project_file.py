@@ -83,8 +83,11 @@ def save_project(self,catchment_obj,project_filename,makeArchive):
   else:
     config['File paths']['am_file']=None
   
-  config['File paths']['pot_file'] = None
-  config['File paths']['analysis_report']=None
+  if catchment_obj.pot_dataset.record_length() > 0:
+    config['File paths']['pot_file'] = fname+".pt"
+  else:
+    config['File paths']['pot_file'] = None
+  config['File paths']['markdown_analysis_report']=None
   config['File paths']['checksum'] = None
   
   config['Supplementary information']={}
@@ -93,16 +96,20 @@ def save_project(self,catchment_obj,project_filename,makeArchive):
   config['Supplementary information']['author_signature']=str(self.page1.author_signature.GetValue())
   config['Supplementary information']['checkers_notes']=str(self.page1.checkers_notes.GetValue())
   config['Supplementary information']['checker_signature']=str(self.page1.checker_signature.GetValue())
+  config['Supplementary information']['cds_notes'] = self.page2.cds_notes.GetValue()
 
 
   config['Analysis']={}
   config['Analysis']['qmed']={}
-  config['Analysis']['qmed']['comment']=None
-  config['Analysis']['qmed']['user_supplied_qmed'] = None
-  config['Analysis']['qmed']['estimate_method']='default'
+  config['Analysis']['qmed']['comment']=self.page3.qmed_notes.GetValue()
+  config['Analysis']['qmed']['user_supplied_qmed'] = self.page3.qmed_user.GetValue()
+  config['Analysis']['qmed']['estimate_method']=self.page3.qmed_method
+  config['Analysis']['qmed']['donor_station_limit']=self.page3.station_limit.GetValue()
+  config['Analysis']['qmed']['donor_search_limit']=self.page3.station_search_distance.GetValue()
   config['Analysis']['qmed']['donor_method']='default'
-  config['Analysis']['qmed']['donor']=[1001,1002]
-  config['Analysis']['qmed']['adjust for urbanisation']=True
+  config['Analysis']['qmed']['idw_weight']=self.page3.idw_weight.GetValue()  
+  config['Analysis']['qmed']['donors']=self.page3.adopted_donors
+  config['Analysis']['qmed']['keep_rural']=self.page3.keep_rural
   config['Analysis']['qmed']['urban_method']='default'
   
   config['Analysis']['fgc']={}
