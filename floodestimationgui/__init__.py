@@ -26,14 +26,14 @@ from floodestimation.loaders import load_catchment
 from floodestimation import db
 from floodestimation.collections import CatchmentCollections
 from floodestimation.analysis import QmedAnalysis, GrowthCurveAnalysis
+from floodestimation.entities import Catchment, Descriptors
+
+from project_file import save_project
 
 class Analysis(object):
     def __init__(self):
         self.name = None
-        #self.folder = os.path.dirname(cd3_file_path)
-        #self.results = {'report_date': date.today()}
-        self.catchment = None
-        #self.results['catchment'] = self.catchment
+        self.catchment = Catchment("River Town", "River Burn")
         self.db_session = db.Session()
         self.gauged_catchments = CatchmentCollections(self.db_session)
         self.qmed = None
@@ -213,9 +213,6 @@ A. Organisations (commercial, academic, educational, private individual or
 
 
 """
-
-
-
         info = wx.AboutDialogInfo()
 
         #info.SetIcon(wx.Icon('icon.png', wx.BITMAP_TYPE_PNG))
@@ -261,8 +258,7 @@ A. Organisations (commercial, academic, educational, private individual or
 
         if (self.fileName != "") and (self.dirName != ""):
           saveFile = os.path.join(self.dirName,self.fileName)
-          self._persistMgr.SetPersistenceFile(saveFile)
-          self._persistMgr.Save(self)
+          save_project(self,c.analysis.catchment,saveFile,False)
 
         else:
             ### - If no name yet, then use the OnFileSaveAs to get name/directory
@@ -273,13 +269,13 @@ A. Organisations (commercial, academic, educational, private individual or
         """ File|SaveAs event - Prompt for File Name. """
         ret = False
         dlg = wx.FileDialog(self, "Save As", self.dirName, self.fileName,
-                           "Text Files (*.hyd)|*.hyd|All Files|*.*", wx.SAVE)
+                           "Files (*.hyd)|*.hyd|All Files|*.*", wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
         if (dlg.ShowModal() == wx.ID_OK):
             self.fileName = dlg.GetFilename()
             self.dirName = dlg.GetDirectory()
             ### - Use the OnFileSave to save the file
             if self.OnFileSave(e):
-                self.SetTitle(self.page1.title.GetValue())
+                self.SetTitle(self.fileName)
                 ret = True
         dlg.Destroy()
         return ret
