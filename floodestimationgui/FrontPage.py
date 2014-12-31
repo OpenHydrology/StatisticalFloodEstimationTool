@@ -56,8 +56,8 @@ class Fpanel(wx.Panel):
         self.chker_sgn_btn.Bind(wx.EVT_BUTTON, self.chkerSign)
         self.chker_clr_btn.Bind(wx.EVT_BUTTON, self.chkerClear)
         
-        self.catchment.Bind(wx.EVT_BUTTON, self.updateTitle)
-        self.location.Bind(wx.EVT_BUTTON, self.updateTitle)
+        self.catchment.Bind(wx.EVT_TEXT, self.updateTitle)
+        self.location.Bind(wx.EVT_TEXT, self.updateTitle)
         
         # use gridbagsizer for layout of widgets
         sizer = wx.GridBagSizer(vgap=10, hgap=10)
@@ -72,8 +72,8 @@ class Fpanel(wx.Panel):
         sizer.Add(self.chker_sgn_btn,pos=(8,3), span=(1,1))
         sizer.Add(self.chker_clr_btn,pos=(8,4), span=(1,1))
         
-        sizer.Add(self.catchment, pos=(1,0), span=(1,2))
-        sizer.Add(self.location, pos=(1,2), span=(1,2))
+        sizer.Add(self.catchment, pos=(1,0), span=(1,1))
+        sizer.Add(self.location, pos=(1,1), span=(1,1))
         sizer.Add(self.purpose, pos=(3,0), span=(1,2))
         sizer.Add(self.author_notes, pos=(4, 0), span=(1,2))
         sizer.Add(self.checkers_notes, pos=(7, 0), span=(1,2))
