@@ -47,7 +47,7 @@ loaded_catchment,gui_data_obj = project_file.load_project(filename)
 '''
 
 
-def save_project(self,catchment_obj,project_filename,makeArchive):
+def save_project(self,catchment_obj,project_filename):
   '''
   Saves the contents of the catchment object and gui object to a project archive
   :param catchment,filename
@@ -55,6 +55,7 @@ def save_project(self,catchment_obj,project_filename,makeArchive):
   :return: None
   :rtype: None  
   '''
+  print(project_filename)
   fname = os.path.basename(project_filename).split('.')[0]
   tempdir = os.path.join(os.path.split(project_filename)[0],fname)
   
@@ -67,6 +68,7 @@ def save_project(self,catchment_obj,project_filename,makeArchive):
   config = ConfigObj()
   config.filename = os.path.join(tempdir,fname+".ini")
   
+  config['Software'] = 'Statistical Flood Estimation Tool, Open Hydrology'
   config['Version'] = '0.0.2'
   config['Date saved'] = ctime()
   config['User']= environ['USERNAME']
@@ -130,8 +132,7 @@ def save_project(self,catchment_obj,project_filename,makeArchive):
   config['Analysis']['fgc']['fgc2']['hydrological_region']=1
 
   config.write()
-
-  if makeArchive:
+  if os.path.splitext(project_filename)[1] =='.hyd':
     zipToArchive(tempdir,project_filename)
 
 def zipToArchive(tempdir,project_filename):
@@ -250,7 +251,7 @@ def load_project(filename,self):
   '''
   
   
-  if filename.endswith('.hyd'):
+  if os.path.splitext(filename)[1] =='.hyd':
     directory = os.path.join(os.path.dirname(filename),os.path.basename(filename.split('.')[0]))
     header_fname = os.path.join(directory,os.path.basename(filename.split('.')[0]))
     shutil.unpack_archive(filename, directory, "zip")
@@ -294,6 +295,6 @@ def load_project(filename,self):
 
 
   
-  if filename.endswith('.hyd'):  
+  if os.path.splitext(filename)[1] =='.hyd':  
     shutil.rmtree(directory)
 

@@ -261,7 +261,7 @@ A. Organisations (commercial, academic, educational, private individual or
 
         if (self.fileName != "") and (self.dirName != ""):
           saveFile = os.path.join(self.dirName,self.fileName)
-          save_project(self,c.analysis.catchment,saveFile,False)
+          save_project(self,c.analysis.catchment,saveFile)
 
         else:
             ### - If no name yet, then use the OnFileSaveAs to get name/directory
