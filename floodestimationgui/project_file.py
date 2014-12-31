@@ -15,11 +15,13 @@
 
 from floodestimation import parsers
 from floodestimation.entities import Catchment, Descriptors
+from floodestimation.loaders import load_catchment
 from configobj import ConfigObj
 import os.path
 from os import environ,rename,unlink
 import shutil
 from time import ctime
+import config
 
 '''
 EXAMPLE USAGE:
@@ -73,7 +75,7 @@ def save_project(self,catchment_obj,project_filename,makeArchive):
   config['File paths']={}
   config['File paths']['ini_file'] = fname+".ini"
   cdsFile = os.path.join(tempdir,fname+".cd3")
-  config['File paths']['cds_file'] = fname+".cds"
+  config['File paths']['cds_file'] = fname+".cd3"
   write_cds_file(catchment_obj,cdsFile)
   
   if len(catchment_obj.amax_records) != 0:
@@ -172,6 +174,7 @@ def write_cds_file(catchment_obj,fname):
   f.write('RMED-2D,'+str(cds.rmed_2d)+'\n')
   f.write('SAAR,'+str(cds.saar)+'\n')
   f.write('SAAR4170,'+str(cds.saar4170)+'\n')
+  f.write('SPRHOST,'+str(cds.sprhost)+'\n')
   f.write('URBCONC1990,'+str(cds.urbconc1990)+'\n')
   f.write('URBEXT1990,'+str(cds.urbext1990)+'\n')
   f.write('URBLOC1990,'+str(cds.urbloc1990)+'\n')
@@ -219,8 +222,8 @@ def write_am_file(catchment_obj,fname):
   
   rejected_yrs = ''
   for amax_record in catchment_obj.amax_records:
-     if amax_record.flag == 2:
-       rejected_yrs = rejected_yrs +str(amax_record.water_year)+','+str(amax_record.water_year)+','
+    if amax_record.flag == 2:
+      rejected_yrs = rejected_yrs +str(amax_record.water_year)+','+str(amax_record.water_year)+','
   if rejected_yrs.endswith(','):
     f.write('[AM Rejected]\n')
     rejected_yrs=rejected_yrs[:-1]
@@ -235,7 +238,7 @@ def write_am_file(catchment_obj,fname):
   f.write('[END]\n')
   f.close()
 
-def load_project(filename):
+def load_project(filename,self):
   '''
   Loads the contents of a project archive to a catchment object
   :param filename
@@ -244,25 +247,34 @@ def load_project(filename):
   :rtype: catchment object  
   '''
   
-  print('not working yet')
-  exit()
   
-  temp_dir = os.path.join(os.path.dirname(filename),os.path.basename(filename.split('.')[0]))
-  header_fname = os.path.join(temp_dir,os.path.basename(filename.split('.')[0]))
-  shutil.unpack_archive(filename, temp_dir, "zip")
+  if filename.endswith('.hyd'):
+    directory = os.path.join(os.path.dirname(filename),os.path.basename(filename.split('.')[0]))
+    header_fname = os.path.join(directory,os.path.basename(filename.split('.')[0]))
+    shutil.unpack_archive(filename, directory, "zip")
 
-  inifname = header_fname+".ini"
+    inifname = header_fname+".ini"
+
+  else:
+    inifname = filename[:-4]+'.ini'
+    directory = os.path.split(filename)[0]
 
   inif = ConfigObj(inifname)
-  cdsfname = os.path.join(temp_dir,inif['File paths']['cds_file'])
+  cdsfname = os.path.join(directory,inif['File paths']['cds_file'])
   
-  catchment = Catchment()
-  catchment = parsers.cdsParser(catchment,cdsfname)
+  self.page2.inside_load=True
+  self.page2.syncCdsTab(cdsfname)
+  self.page2.inside_load=False
   
-        
-  catchment.channel_width = inif['Supplementary information']['channel_width']
-    
-  shutil.rmtree(temp_dir)
+  self.page1.purpose.SetValue(inif['Supplementary information']['purpose'])
+  self.page1.author_notes.SetValue(inif['Supplementary information']['authors_notes'])
+  self.page1.checkers_notes.SetValue(inif['Supplementary information']['checkers_notes'])
+  self.page1.author_signature.SetValue(inif['Supplementary information']['author_signature'])
+  self.page1.checker_signature.SetValue(inif['Supplementary information']['checker_signature'])
+  self.page2.cds_notes.SetValue(inif['Supplementary information']['cds_notes'])
   
-  return catchment
+  self.page3.qmed_notes.SetValue(inif['Analysis']['qmed']['comment'])
+  
+  if filename.endswith('.hyd'):  
+    shutil.rmtree(directory)
 

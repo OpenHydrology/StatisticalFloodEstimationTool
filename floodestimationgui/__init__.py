@@ -28,7 +28,7 @@ from floodestimation.collections import CatchmentCollections
 from floodestimation.analysis import QmedAnalysis, GrowthCurveAnalysis
 from floodestimation.entities import Catchment, Descriptors
 
-from project_file import save_project
+from project_file import save_project, load_project
 
 class Analysis(object):
     def __init__(self):
@@ -41,12 +41,12 @@ class Analysis(object):
     def finish(self):
         self.db_session.close()
 
-    def run(self):
-        try:
-            self.run_qmed_analysis()
-            self.run_growthcurve()
-        finally:
-            self.finish()
+#    def run(self):
+#        try:
+ #           self.run_qmed_analysis()
+  #          self.run_growthcurve()
+   #     finally:
+    #        self.finish()
 
     def run_qmed_analysis(self):
         self.qmed_analysis = QmedAnalysis(self.catchment, self.gauged_catchments)
@@ -241,13 +241,12 @@ A. Organisations (commercial, academic, educational, private individual or
   def OnFileOpen(self, e):
         """ File|Open event - Open dialog box. """
         dlg = wx.FileDialog(self, "Open", self.dirName, self.fileName,
-                           "Text Files (*.hyd)|*.hyd|All Files|*.*", wx.OPEN)
+                           "Project directory (*.ini)|*.ini;*.hyd|Project archive|*.ini;*.hyd", wx.FD_OPEN)
         if (dlg.ShowModal() == wx.ID_OK):
             self.fileName = dlg.GetFilename()
             self.dirName = dlg.GetDirectory()
         filePath=os.path.join(self.dirName,self.fileName)
-        self._persistMgr.SetPersistenceFile(filePath)
-        self._persistMgr.Restore(self)
+        load_project(filePath,self)
 
 
         dlg.Destroy()
