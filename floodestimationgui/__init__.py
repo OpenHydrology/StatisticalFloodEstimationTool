@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # Current package imports
-import floodestimation,wx
+import floodestimation,wx,wx.adv
 import os
 import FrontPage,CatchmentDescriptors,QMED
 import config as c
@@ -110,12 +110,7 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnFileSave, mS)
         self.Bind(wx.EVT_MENU, self.OnFileSaveAs, mSA)
         self.Bind(wx.EVT_MENU, self.OnQuit, mQ)
-
-        # Defining the edit menu
-        editMenu = wx.Menu()
-        mPreferences = wx.MenuItem(editMenu, wx.ID_ANY, '&Preferences')
-        editMenu.Append(mPreferences)
-        self.Bind(wx.EVT_MENU,self.OnPreferences,mPreferences)     
+ 
         
         # Defining the help menu
         helpMenu = wx.Menu()
@@ -125,7 +120,6 @@ class MainFrame(wx.Frame):
          
         # Applying menus to the menu bar
         menubar.Append(fileMenu, '&File')
-        menubar.Append(editMenu, '&Edit')
         menubar.Append(helpMenu,'&Help')
 
 
@@ -180,8 +174,14 @@ class MainFrame(wx.Frame):
         
         description = """        The Statistical Flood Estimation Tool is a means of implementing current statistical
         procedures for estimating the magnitude of flood flows in the United Kingdom using the methods 
-        detailed in the Flood Estimation Handbook and subsequent updates.  This is an early development
-        version, it is intended that additional features will be implemented in the coming months and years.
+        detailed in the Flood Estimation Handbook and subsequent updates.  It has been developed by the not
+        for profit Open Hydrology (OH) community of software developers.  The software makes extensive use 
+        of the floodestimation library which is also developed by OH.
+        
+        This is an early development version, it is intended that additional features will be implemented in 
+        the coming months and years.
+        
+        
 """
 
         licence = """The Statistical Flood Estimation Tool is free software; you can redistribute 
@@ -205,26 +205,30 @@ A. Organisations (commercial, academic, educational, private individual or
   its use.  In submitting their public declaration, organisations should 
   provide details of the findings of their review including any caveats or
   exclusions of use.  Organisations must record errors or bugs they find within
-  the software project's issue reporting system. This exclusion of use permits 
-  reasonable use of the software by organisations for testing and validation.
+  the project's online issue tracking system within its GitHub repository. 
+  This exclusion of use permits reasonable use of the software by organisations
+  for testing and validation.
   
   Software project website:
   https://github.com/OpenHydrology/StatisticalFloodEstimationTool/wiki
 
 
 """
-        info = wx.AboutDialogInfo()
 
-        #info.SetIcon(wx.Icon('icon.png', wx.BITMAP_TYPE_PNG))
+        info = wx.adv.AboutDialogInfo()
+
+        info.SetIcon(wx.Icon('..\\art\\OH.darkgrey.250x250.png', wx.BITMAP_TYPE_PNG))
         info.SetName('Statistical Flood Estimation Tool')
         info.SetVersion('Pre-release 0.0.2')
         info.SetDescription(description)
-        info.SetCopyright('(C) 2014 Neil Nutt')
+        info.SetCopyright('(C) 2015 Open Hydrology developer community')
         info.SetWebSite('https://github.com/OpenHydrology/StatisticalFloodEstimationTool')
         info.SetLicence(licence)
-        info.AddDeveloper('Neil Nutt neilnutt{at]googlemail[dot]com')
+        info.AddDeveloper('Neil Nutt - Project Founder - neilnutt[at]googlemail[dot]com')
+        info.AddDeveloper('\nFlorenz Hollebrandse - Developer - f.a.p.hollebrandse[at]protonmail[dot]ch')
+        info.AddDeveloper('\nMichael Spencer - Communications - spencer.mike.r[at]gmail[dot]com')
 
-        wx.AboutBox(info)
+        wx.adv.AboutBox(info)
 
   def OnPreferences(self,e):
       '''
