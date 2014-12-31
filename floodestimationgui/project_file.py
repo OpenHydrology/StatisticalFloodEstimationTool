@@ -252,8 +252,8 @@ def load_project(filename,self):
   
   
   if os.path.splitext(filename)[1] =='.hyd':
-    directory = os.path.join(os.path.dirname(filename),os.path.basename(filename.split('.')[0]))
-    header_fname = os.path.join(directory,os.path.basename(filename.split('.')[0]))
+    directory = os.path.join( os.path.split(filename)[0],os.path.basename(filename)[:-4])
+    header_fname = os.path.join(directory,os.path.basename(filename)[:-4])
     shutil.unpack_archive(filename, directory, "zip")
 
     inifname = header_fname+".ini"
