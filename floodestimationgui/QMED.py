@@ -274,6 +274,7 @@ class Fpanel(wx.Panel):
       
     def onRefresh(self,event):
       self.updateUrbanisation()
+      self.checkMethod()
       self.calcQMeds()
       self.updateMethod()
       if self.donor_search_criteria_refreshed:
@@ -379,3 +380,35 @@ class Fpanel(wx.Panel):
         filePath = loadBox.GetPath()
         config.analysis.catchment.pot_records = parsers.PotParser().parse(filePath)
       loadBox.Destroy()
+      
+    def checkMethod(self):
+      methods = ('amax_records', 'pot_records', 'descriptors', 'descriptors_1999', 'area', 'channel_width')
+      if self.qmed_method == 'best':
+        if len(config.analysis.catchment.amax_records) > 0:
+          self.qmed_method = 'amax_records'
+        elif config.analysis.catchment.pot_records is not None:
+          self.qmed_method = 'pot_records'
+        elif config.analysis.catchment.descriptors.area is not None and config.analysis.catchment.descriptors.bfihost is not None and config.analysis.catchment.descriptors.saar is not None and config.analysis.catchment.descriptors.farl is not None:
+          self.qmed_method = 'descriptors'
+        elif config.analysis.catchment.descriptors.area is not None:
+          self.qmed_method = 'area'
+        elif config.analysis.catchment.channel_width is not None:
+          self.qmed_method = 'channel_width'
+      
+      if self.qmed_method == 'amax_records':
+        self.rb4.SetValue(True)
+      elif  self.qmed_method == 'descriptors':
+        self.rb1.SetValue(True)
+      elif self.qmed_method == 'descriptors_1999':  
+        self.rb2.SetValue(True)
+      elif self.qmed_method == 'area':
+        self.rb3.SetValue(True)
+      elif self.qmed_method == 'pot_records':
+        self.rb5.SetValue(True)
+      elif self.qmed_method == 'channel_width':
+        self.rb6.SetValue(True)
+      elif self.qmed_method == 'user':
+        self.rb7.SetValue(True)
+           
+        
+      
