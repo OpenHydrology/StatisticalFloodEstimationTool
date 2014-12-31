@@ -85,7 +85,7 @@ def save_project(self,catchment_obj,project_filename,makeArchive):
   else:
     config['File paths']['am_file']=None
   
-  if catchment_obj.pot_dataset.record_length() > 0:
+  if catchment_obj is None:
     config['File paths']['pot_file'] = fname+".pt"
   else:
     config['File paths']['pot_file'] = None
@@ -274,6 +274,21 @@ def load_project(filename,self):
   self.page2.cds_notes.SetValue(inif['Supplementary information']['cds_notes'])
   
   self.page3.qmed_notes.SetValue(inif['Analysis']['qmed']['comment'])
+  self.page3.qmed_user.SetValue(inif['Analysis']['qmed']['user_supplied_qmed'])
+  self.page3.qmed_method = inif['Analysis']['qmed']['estimate_method']
+  self.page3.station_limit.SetValue(inif['Analysis']['qmed']['donor_station_limit'])
+  self.page3.station_search_distance.SetValue(inif['Analysis']['qmed']['donor_search_limit'])
+  self.page3.idw_weight.SetValue(inif['Analysis']['qmed']['idw_weight'])
+  if inif['Analysis']['qmed']['keep_rural'].lower() == 'true':                                            
+    self.page3.keep_rural= True
+    self.page3.update_for_urb_chk.SetValue(False)
+    self.page3.update_for_urbanisation = False
+  else:
+    self.page3.keep_rural= False
+    self.page3.update_for_urb_chk.SetValue(True)
+    self.page3.update_for_urbanisation = True
+
+
   
   if filename.endswith('.hyd'):  
     shutil.rmtree(directory)
