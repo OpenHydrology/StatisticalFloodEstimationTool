@@ -53,6 +53,8 @@ class Fpanel(wx.Panel):
       
       self.qmed_method = 'best'
       self.donor_search_criteria_refreshed = True
+      self.adopted_donors = None
+      self.keep_rural=False
       
       self.adoptedQmed = '-'
       
@@ -310,6 +312,8 @@ class Fpanel(wx.Panel):
       config.analysis.qmed_analysis.idw_power = float(self.idw_weight.GetValue())
       
       self.suggested_donors = config.analysis.qmed_analysis.find_donor_catchments(self.search_limit, self.search_distance)
+      if self.adopted_donors is None:
+        self.adopted_donors = self.suggested_donors
       
       donors_details=list()
       weights = config.analysis.qmed_analysis._donor_weights(self.suggested_donors)

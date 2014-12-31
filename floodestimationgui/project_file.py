@@ -93,6 +93,8 @@ def save_project(self,catchment_obj,project_filename,makeArchive):
   config['File paths']['checksum'] = None
   
   config['Supplementary information']={}
+  config['Supplementary information']['catchment']=str(self.page1.catchment.GetValue())
+  config['Supplementary information']['location']=str(self.page1.location.GetValue())
   config['Supplementary information']['purpose']=str(self.page1.purpose.GetValue())
   config['Supplementary information']['authors_notes']=str(self.page1.author_notes.GetValue())
   config['Supplementary information']['author_signature']=str(self.page1.author_signature.GetValue())
@@ -266,6 +268,8 @@ def load_project(filename,self):
   self.page2.syncCdsTab(cdsfname)
   self.page2.inside_load=False
   
+  self.page1.catchment.SetValue(inif['Supplementary information']['catchment'])
+  self.page1.location.SetValue(inif['Supplementary information']['location'])
   self.page1.purpose.SetValue(inif['Supplementary information']['purpose'])
   self.page1.author_notes.SetValue(inif['Supplementary information']['authors_notes'])
   self.page1.checkers_notes.SetValue(inif['Supplementary information']['checkers_notes'])
