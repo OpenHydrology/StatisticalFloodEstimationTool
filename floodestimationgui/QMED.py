@@ -53,6 +53,7 @@ class Fpanel(wx.Panel):
       
       self.qmed_method = 'best'
       self.donor_search_criteria_refreshed = True
+      self.suggested_donors = None
       self.adopted_donors = None
       self.keep_rural=False
       
@@ -220,13 +221,13 @@ class Fpanel(wx.Panel):
       self.SetSizerAndFit(border)
       self.Fit()
 
-    def SetUpdateMethod(self,event):
-      
-      self.updateMethod()
-      self.refreshDonors()
+    #def SetUpdateMethod(self,event):
+    #  
+    #  self.updateMethod()
+    #  self.refreshDonors()
       
     def updateMethod(self):
-      self.donor_search_criteria_refreshed = True
+      #self.donor_search_criteria_refreshed = True
       if self.distance_decay_update.GetValue():
         self.donor_weighting = 'idw'
       elif self.direct_transfer_update.GetValue():
@@ -275,6 +276,8 @@ class Fpanel(wx.Panel):
       self.Update()
       
     def onRefresh(self,event):
+      self.calcQMeds()##Yes it is repeated, it is a lazy way of created a qmed_analysis object for a load of a project file (self.reload())
+      self.reload()
       self.updateUrbanisation()
       self.checkMethod()
       self.calcQMeds()
@@ -306,6 +309,21 @@ class Fpanel(wx.Panel):
       self.Refresh()
       self.Update()    
     
+    
+    def reload(self):
+      if type(self.adopted_donors) == type(list()) and self.suggested_donors is None:
+        temp_adopted_donors = self.adopted_donors
+        self.refreshDonors()
+         
+        for i in range(self.list.GetItemCount()):
+            checkListItem = self.list.GetItemText(i,col=0)
+            if str(checkListItem) in temp_adopted_donors:
+              self.list.CheckItem(i, check=True)
+            else:
+              self.list.CheckItem(i, check=False)
+        
+        self.donor_search_criteria_refreshed = False             
+              
     def refreshDonors(self):
       self.search_limit = int(self.station_limit.GetValue())
       self.search_distance = float(self.station_search_distance.GetValue())

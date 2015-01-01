@@ -272,7 +272,7 @@ A. Organisations (commercial, academic, educational, private individual or
         """ File|SaveAs event - Prompt for File Name. """
         ret = False
         dlg = wx.FileDialog(self, "Save As", self.dirName, self.fileName,
-                           "Files (*.hyd)|*.hyd|All Files|*.*", wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
+                           "Files (*.hyd)|*.hyd|All Files|*.ini*", wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
         if (dlg.ShowModal() == wx.ID_OK):
             self.fileName = dlg.GetFilename()
             self.dirName = dlg.GetDirectory()

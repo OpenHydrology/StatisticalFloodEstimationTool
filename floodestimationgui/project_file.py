@@ -114,7 +114,7 @@ def save_project(self,catchment_obj,project_filename):
   config['Analysis']['qmed']['donor_search_limit']=self.page3.station_search_distance.GetValue()
   config['Analysis']['qmed']['donor_method']='default'
   config['Analysis']['qmed']['idw_weight']=self.page3.idw_weight.GetValue()  
-  config['Analysis']['qmed']['donors']=self.page3.adopted_donors
+  config['Analysis']['qmed']['adopted_donors']=self.page3.adopted_donors
   config['Analysis']['qmed']['keep_rural']=self.page3.keep_rural
   config['Analysis']['qmed']['urban_method']='default'
   
@@ -293,7 +293,14 @@ def load_project(filename,self):
     self.page3.update_for_urb_chk.SetValue(True)
     self.page3.update_for_urbanisation = True
 
-
+  self.page3.adopted_donors = inif['Analysis']['qmed']['adopted_donors']
+  print(type(self.page3.adopted_donors))
+  ##for i in range(self.page3.list.GetItemCount()):
+  #  if self.list.IsChecked(i):
+  #    checked_item = self.list.GetItemText(i,col=0)
+  #    for site in self.suggested_donors:
+  #      if str(site) == checked_item:
+  #        self.adopted_donors.append(site)  
   
   if os.path.splitext(filename)[1] =='.hyd':  
     shutil.rmtree(directory)
