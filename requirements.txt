@@ -1,2 +1,3 @@
-floodestimation
+floodestimation>=0.1.3
 wxpython
+configobj
