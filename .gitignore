@@ -54,3 +54,4 @@ docs/_build/
 
 # PyCharm
 .idea/
+floodestimationgui/gui.spec
