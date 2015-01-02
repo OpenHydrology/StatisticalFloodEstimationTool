@@ -294,7 +294,6 @@ def load_project(filename,self):
     self.page3.update_for_urbanisation = True
 
   self.page3.adopted_donors = inif['Analysis']['qmed']['adopted_donors']
-  print(type(self.page3.adopted_donors))
   ##for i in range(self.page3.list.GetItemCount()):
   #  if self.list.IsChecked(i):
   #    checked_item = self.list.GetItemText(i,col=0)
