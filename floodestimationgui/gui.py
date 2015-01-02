@@ -22,11 +22,12 @@ import FrontPage,CatchmentDescriptors,QMED
 import config as c
 
 
-from floodestimation.loaders import load_catchment
+#from floodestimation.loaders import load_catchment
 from floodestimation import db
 from floodestimation.collections import CatchmentCollections
-from floodestimation.analysis import QmedAnalysis, GrowthCurveAnalysis
-from floodestimation.entities import Catchment, Descriptors
+from floodestimation.analysis import QmedAnalysis
+from floodestimation.analysis import GrowthCurveAnalysis
+from floodestimation.entities import Catchment
 
 from project_file import save_project, load_project
 

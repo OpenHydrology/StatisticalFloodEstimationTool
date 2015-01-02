@@ -247,6 +247,12 @@ class Fpanel(wx.Panel):
         filePath = loadBox.GetPath()
         self.inside_load = True
         self.syncCdsTab(filePath)
+        
+        try:
+          test = config.analysis.catchment.pot_records
+        except AttributeError:
+          config.analysis.catchment.pot_records = None
+        
       loadBox.Destroy()
       self.inside_load=False
       

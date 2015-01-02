@@ -56,6 +56,7 @@ class Fpanel(wx.Panel):
       self.suggested_donors = None
       self.adopted_donors = None
       self.keep_rural=False
+      config.analysis.catchment.pot_records = None
       
       self.adoptedQmed = '-'
       
@@ -410,7 +411,7 @@ class Fpanel(wx.Panel):
           self.qmed_method = 'amax_records'
         elif config.analysis.catchment.pot_records is not None:
           self.qmed_method = 'pot_records'
-        elif config.analysis.catchment.descriptors.area is not None and config.analysis.catchment.descriptors.bfihost is not None and config.analysis.catchment.descriptors.saar is not None and config.analysis.catchment.descriptors.farl is not None:
+        elif config.analysis.catchment.descriptors.dtm_area is not None and config.analysis.catchment.descriptors.bfihost is not None and config.analysis.catchment.descriptors.saar is not None and config.analysis.catchment.descriptors.farl is not None:
           self.qmed_method = 'descriptors'
         elif config.analysis.catchment.descriptors.area is not None:
           self.qmed_method = 'area'
