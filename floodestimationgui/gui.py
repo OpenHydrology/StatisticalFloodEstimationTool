@@ -42,13 +42,6 @@ class Analysis(object):
     def finish(self):
         self.db_session.close()
 
-#    def run(self):
-#        try:
- #           self.run_qmed_analysis()
-  #          self.run_growthcurve()
-   #     finally:
-    #        self.finish()
-
     def run_qmed_analysis(self):
         self.qmed_analysis = QmedAnalysis(self.catchment, self.gauged_catchments)
         self.results = self.qmed_analysis.results_log
@@ -95,18 +88,18 @@ class MainFrame(wx.Frame):
 
         #  Defining the file menu
         fileMenu = wx.Menu()
-        mN = wx.MenuItem(fileMenu, wx.ID_NEW, '&New\tCtrl+N')
+        #mN = wx.MenuItem(fileMenu, wx.ID_NEW, '&New\tCtrl+N')
         mO = wx.MenuItem(fileMenu, wx.ID_OPEN, '&Open\tCtrl+O')
         mSA = wx.MenuItem(fileMenu, wx.ID_SAVEAS, '&Save as\tCtrl+ALT+S')
         mS = wx.MenuItem(fileMenu, wx.ID_SAVE, '&Save\tCtrl+S')
-        fileMenu.Append(mN)
+        #fileMenu.Append(mN)
         fileMenu.Append(mO)
         fileMenu.Append(mS)
         fileMenu.Append(mSA)
         fileMenu.AppendSeparator()
         mQ = wx.MenuItem(fileMenu, wx.ID_EXIT, '&Quit\tCtrl+Q')
         fileMenu.Append(mQ)
-        self.Bind(wx.EVT_MENU, self.OnNew, mN)
+        #self.Bind(wx.EVT_MENU, self.OnNew, mN)
         self.Bind(wx.EVT_MENU, self.OnFileOpen, mO)
         self.Bind(wx.EVT_MENU, self.OnFileSave, mS)
         self.Bind(wx.EVT_MENU, self.OnFileSaveAs, mSA)
@@ -250,8 +243,8 @@ A. Organisations (commercial, academic, educational, private individual or
         if (dlg.ShowModal() == wx.ID_OK):
             self.fileName = dlg.GetFilename()
             self.dirName = dlg.GetDirectory()
-        filePath=os.path.join(self.dirName,self.fileName)
-        load_project(filePath,self)
+            filePath=os.path.join(self.dirName,self.fileName)
+            load_project(filePath,self)
 
 
         dlg.Destroy()
@@ -283,11 +276,6 @@ A. Organisations (commercial, academic, educational, private individual or
                 ret = True
         dlg.Destroy()
         return ret
-
-  def OnNew(self,e):
-      pass
-
-  
         
   def OnQuit(self, event):
         dlg = wx.MessageDialog(self,
