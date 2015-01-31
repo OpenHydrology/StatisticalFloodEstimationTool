@@ -287,7 +287,6 @@ A. Organisations (commercial, academic, educational, private individual or
             self.Destroy()
 
 
-
 if __name__ == "__main__":
     app = wx.App(redirect=False)
     #app = wx.App(redirect=True,filename='error_log.txt')

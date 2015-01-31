@@ -33,7 +33,18 @@ from floodestimation.collections import CatchmentCollections
 from floodestimation.analysis import QmedAnalysis
 from AMAX import AmaxFrame
 from floodestimation import parsers
+import math
 
+def sgfgs(value,figures=3):
+  if type(value) == str() or value == None:
+    print(value)
+    return str(value)
+  print(value)
+  log10 = math.log10(float(value))
+  if log10 < figures-1:
+    return str(round(value,int(figures-log10)))
+  else:
+    return str(round(value,int(figures-1-log10)))
 
 class CheckListCtrl(wx.ListCtrl, CheckListCtrlMixin, ListCtrlAutoWidthMixin):
     def __init__(self, parent):
@@ -56,6 +67,7 @@ class Fpanel(wx.Panel):
       self.suggested_donors = None
       self.adopted_donors = None
       self.keep_rural=False
+      self.signfigs = 3
       config.analysis.catchment.pot_records = None
       
       self.adoptedQmed = '-'
@@ -267,9 +279,9 @@ class Fpanel(wx.Panel):
         config.analysis.qmed_analysis.adopted_qmed_value =  float(self.qmed_user.GetValue())
         
       if self.qmed_method == 'descriptors' or self.qmed_method == 'descriptors_1999':
-        self.selected_unadj_qmed.SetLabel(str(config.analysis.qmed_analysis.qmed(method=self.qmed_method,as_rural=True,donor_catchments=[])))
+        self.selected_unadj_qmed.SetLabel(sgfgs(config.analysis.qmed_analysis.qmed(method=self.qmed_method,as_rural=True,donor_catchments=[])))
       elif self.qmed_method== 'pot_records'or self.qmed_method == 'amax_records':
-        self.selected_unadj_qmed.SetLabel(str(config.analysis.qmed_analysis.qmed(method=self.qmed_method)))
+        self.selected_unadj_qmed.SetLabel(sgfgs(config.analysis.qmed_analysis.qmed(method=self.qmed_method)))
       elif self.qmed_method=='user':
         self.selected_unadj_qmed.SetLabel(self.qmed_user.GetValue())
         
@@ -290,7 +302,7 @@ class Fpanel(wx.Panel):
       self.updateAdopted()
 
     def refreshUrbanisation(self):
-      self.urban_adjustment_factor.SetLabel(str(config.analysis.qmed_analysis.urban_adj_factor()))
+      self.urban_adjustment_factor.SetLabel(sgfgs(config.analysis.qmed_analysis.urban_adj_factor()))
       #self.urban_adjustment_factor.SetLabel(str(config.analysis.qmed_analysis._pruaf()))
       self.urban_expansion_factor.SetLabel(str('Not calculated'))
       
@@ -300,12 +312,12 @@ class Fpanel(wx.Panel):
       
       qmedDict = config.analysis.results['qmed_all_methods']
       
-      self.qmed_cds1999.SetLabel(str(config.analysis.qmed_analysis.qmed('descriptors_1999',as_rural=True,donor_catchments=[])))
-      self.qmed_cds2008.SetLabel(str(config.analysis.qmed_analysis.qmed('descriptors',as_rural=True,donor_catchments=[])))
-      self.qmed_obs_amax.SetLabel(str(qmedDict['amax_records']))
-      self.qmed_obs_pot.SetLabel(str(qmedDict['pot_records']))
-      self.qmed_areaOnly.SetLabel(str(config.analysis.qmed_analysis.qmed('area')))
-      self.qmed_geom.SetLabel(str(qmedDict['channel_width']))
+      self.qmed_cds1999.SetLabel(sgfgs(config.analysis.qmed_analysis.qmed('descriptors_1999',as_rural=True,donor_catchments=[])))
+      self.qmed_cds2008.SetLabel(sgfgs(config.analysis.qmed_analysis.qmed('descriptors',as_rural=True,donor_catchments=[])))
+      self.qmed_obs_amax.SetLabel(sgfgs(qmedDict['amax_records']))
+      self.qmed_obs_pot.SetLabel(sgfgs(qmedDict['pot_records']))
+      self.qmed_areaOnly.SetLabel(sgfgs(config.analysis.qmed_analysis.qmed('area')))
+      self.qmed_geom.SetLabel(sgfgs(qmedDict['channel_width']))
 
       self.Refresh()
       self.Update()    
@@ -347,10 +359,10 @@ class Fpanel(wx.Panel):
      
       for donor in donors_details[::-1]:
         index = self.list.InsertStringItem(0, str(donor[0]))
-        self.list.SetItem(index, 1, str(donor[1]))
-        self.list.SetItem(index, 2, str(donor[2]))
-        self.list.SetItem(index, 3, str(donor[3]))
-        self.list.SetItem(index, 4, str(donor[4]))
+        self.list.SetItem(index, 1, sgfgs(donor[1]))
+        self.list.SetItem(index, 2, sgfgs(donor[2]))
+        self.list.SetItem(index, 3, sgfgs(donor[3]))
+        self.list.SetItem(index, 4, sgfgs(donor[4]))
         self.list.CheckItem(index,check=True)                            
     
       self.adopted_donors = self.suggested_donors  # Adopted donors to in the future be based on which ones are selected.  Everytime the search criteria or cds are refreshed the selected list would be reset
@@ -372,23 +384,23 @@ class Fpanel(wx.Panel):
       if self.qmed_method == 'amax_records' or self.qmed_method == 'pot_records':
         locally_adjusted_qmed = config.analysis.qmed_analysis.qmed(method=self.qmed_method)
         unadjusted_qmed = locally_adjusted_qmed
-        self.adopted_qmed.SetLabel(str(config.analysis.qmed_analysis.qmed(method=self.qmed_method)))      
+        self.adopted_qmed.SetLabel(sgfgs(config.analysis.qmed_analysis.qmed(method=self.qmed_method)))      
       elif self.qmed_method == 'descriptors' or self.qmed_method == 'descriptors_1999':
         unadjusted_qmed = config.analysis.qmed_analysis.qmed(method=self.qmed_method,as_rural=self.keep_rural,donor_catchments=[])
         locally_adjusted_qmed = config.analysis.qmed_analysis.qmed(method=self.qmed_method,as_rural=self.keep_rural,donor_catchments=self.adopted_donors)
-        self.adopted_qmed.SetLabel(str(config.analysis.qmed_analysis.qmed(method=self.qmed_method,as_rural=self.keep_rural,donor_catchments=self.adopted_donors)))
+        self.adopted_qmed.SetLabel(sgfgs(config.analysis.qmed_analysis.qmed(method=self.qmed_method,as_rural=self.keep_rural,donor_catchments=self.adopted_donors)))
       elif self.qmed_method == 'user':
         unadjusted_qmed = float(self.qmed_user.GetValue())
         locally_adjusted_qmed = unadjusted_qmed
-        self.adopted_qmed.SetLabel(str(unadjusted_qmed))
+        self.adopted_qmed.SetLabel(sgfgs(unadjusted_qmed))
       else:
         unadjusted_qmed = config.analysis.qmed_analysis.qmed(method=self.qmed_method)
         locally_adjusted_qmed = config.analysis.qmed_analysis.qmed(method=self.qmed_method)
-        self.adopted_qmed.SetLabel(str(config.analysis.qmed_analysis.qmed(method=self.qmed_method)))  
+        self.adopted_qmed.SetLabel(sgfgs(config.analysis.qmed_analysis.qmed(method=self.qmed_method)))  
 
       adjustment = locally_adjusted_qmed/unadjusted_qmed
-      self.locally_adjusted_qmed.SetValue(str(locally_adjusted_qmed))
-      self.local_qmed_adjustment.SetValue(str(adjustment))
+      self.locally_adjusted_qmed.SetValue(sgfgs(locally_adjusted_qmed))
+      self.local_qmed_adjustment.SetValue(sgfgs(adjustment))
       
       config.analysis.qmed_analysis.adopted_qmed_value = float(self.adopted_qmed.GetValue())
 
@@ -405,7 +417,7 @@ class Fpanel(wx.Panel):
       loadBox.Destroy()
       
     def checkMethod(self):
-      methods = ('amax_records', 'pot_records', 'descriptors', 'descriptors_1999', 'area', 'channel_width')
+      #methods = ('amax_records', 'pot_records', 'descriptors', 'descriptors_1999', 'area', 'channel_width')
       if self.qmed_method == 'best':
         if len(config.analysis.catchment.amax_records) > 0:
           self.qmed_method = 'amax_records'
