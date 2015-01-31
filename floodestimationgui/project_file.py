@@ -132,7 +132,7 @@ def save_project(self,catchment_obj,project_filename):
   config['Analysis']['fgc']['fgc2']['hydrological_region']=1
 
   config.write()
-  if os.path.splitext(project_filename)[1] =='.hyd':
+  if os.path.splitext(project_filename)[1] =='.ohp':
     zipToArchive(tempdir,project_filename)
 
 def zipToArchive(tempdir,project_filename):
@@ -251,7 +251,7 @@ def load_project(filename,self):
   '''
   
   
-  if os.path.splitext(filename)[1] =='.hyd':
+  if os.path.splitext(filename)[1] =='.ohp':
     directory = os.path.join( os.path.split(filename)[0],os.path.basename(filename)[:-4])
     header_fname = os.path.join(directory,os.path.basename(filename)[:-4])
     shutil.unpack_archive(filename, directory, "zip")
@@ -301,6 +301,6 @@ def load_project(filename,self):
   #      if str(site) == checked_item:
   #        self.adopted_donors.append(site)  
   
-  if os.path.splitext(filename)[1] =='.hyd':  
+  if os.path.splitext(filename)[1] =='.ohp':  
     shutil.rmtree(directory)
 

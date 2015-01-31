@@ -239,7 +239,7 @@ A. Organisations (commercial, academic, educational, private individual or
   def OnFileOpen(self, e):
         """ File|Open event - Open dialog box. """
         dlg = wx.FileDialog(self, "Open", self.dirName, self.fileName,
-                           "Project directory (*.ini)|*.ini;*.hyd|Project archive (*.hyd)|*.ini;*.hyd", wx.FD_OPEN)
+                           "Project directory (*.ini)|*.ini;*.ohp|Project archive (*.ohp)|*.ini;*.ohp", wx.FD_OPEN)
         if (dlg.ShowModal() == wx.ID_OK):
             self.fileName = dlg.GetFilename()
             self.dirName = dlg.GetDirectory()
@@ -266,7 +266,7 @@ A. Organisations (commercial, academic, educational, private individual or
         """ File|SaveAs event - Prompt for File Name. """
         ret = False
         dlg = wx.FileDialog(self, "Save As", self.dirName, self.fileName,
-                           "Project directory (*.ini)|*.ini;*.hyd|Project archive (*.hyd)|*.ini;*.hyd", wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
+                           "Project directory (*.ini)|*.ini;*.ohp|Project archive (*.ohp)|*.ini;*.ohp", wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
         if (dlg.ShowModal() == wx.ID_OK):
             self.fileName = dlg.GetFilename()
             self.dirName = dlg.GetDirectory()
